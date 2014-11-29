@@ -1,0 +1,84 @@
+{
+    com.badlogic.gdx.graphics.Color: {
+        white: { r: 0.85, g: 0.85, b: 0.85, a: 1 },
+        black: { r: 0.3, g: 0.3, b: 0.3, a: 1 },
+        light-blue: { r: 0.4, g: 0.5, b: 0.9, a:1 },
+        blue: { r: 0.3, g: 0.4, b: 0.7, a: 1 },
+        dark-blue: { r: 0.2, g: 0.2, b: 0.4, a: 1 },
+        red: { r: 0.7, g: 0.2, b: 0.3, a: 1},
+        purple: { r: 0.45, g: 0, b: 0.6, a: 1}
+    },
+    
+    com.badlogic.gdx.graphics.g2d.BitmapFont: {
+    	regular: { file: gui/fonts/regular.fnt },
+    	big: { file: gui/fonts/big.fnt },
+    	huge: { file: gui/fonts/huge.fnt }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+    	default: { font: regular, fontColor: black },
+    	default-white: { font: regular, fontColor: white },
+    	default-black: { font: regular, fontColor: black },
+    	default-light-blue: { font: regular, fontColor: light-blue },
+    	default-blue: { font: regular, fontColor: blue },
+    	default-dark-blue: { font: regular, fontColor: dark-blue },
+    	default-purple: { font: regular, fontColor: purple },
+    	default-red: { font: regular, fontColor: red },
+    	big: { font: big, fontColor: black },
+    	big-white: { font: big, fontColor: white },
+    	big-black: { font: big, fontColor: black },
+    	big-blue: { font: big, fontColor: blue },
+    	big-dark-blue: { font: big, fontColor: dark-blue },
+    	huge: { font: huge, fontColor: black },
+    	huge-white: { font: huge, fontColor: white },
+    	huge-black: { font: huge, fontColor: black },
+    	huge-blue: { font: huge, fontColor: blue },
+    	huge-dark-blue: { font: huge, fontColor: dark-blue },
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+    	flag-en: { up: flag_en },
+    	flag-pl: { up: flag_pl }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+    	default: { up: button, over: button_highlight, down: button_highlight, font: regular, fontColor: black, overFontColor: dark-blue, downFontColor: blue, pressedOffsetY: -1 },
+    	text-only: { font: regular, fontColor: black, overFontColor: dark-blue, downFontColor: blue, pressedOffsetY: -1 }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+        default: { background: window, titleFont: regular, titleFontColor: black },
+        dialog: { background: dialog, titleFont: big, titleFontColor: white, stageBackground: hide },
+        transparent: { titleFont: regular, titleFontColor: white }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+        default: { font: regular, fontColor: black, focusedFontColor: dark-blue, background: textfield, cursor: textcursor, selection: select }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+        default: { background: list, hScrollKnob: bar_horizonal, vScrollKnob: bar_vertical },
+        no-scrolls: { background: list }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
+        default: { checkboxOn: checkbox_on, checkboxOff: checkbox_off, font: regular, fontColor: dark-blue, checkedFontColor: blue }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
+        default: { font: regular, fontColorUnselected: white, fontColorSelected: blue, selection: select }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+    	default: { background: loading_bar_unloaded, knobBefore: loading_bar_loaded }
+    },
+    
+    com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+    	default: { background: slider, knob: slider_knob }
+    },
+    
+    pl.edu.pb.wi.ztpmtm.gui.widgets.Background$BackgroundStyle: {
+    	default: { background: background, isMoving: true, isNeverTransparent: true, scrollingSpeed: 35 }
+    }
+    
+}

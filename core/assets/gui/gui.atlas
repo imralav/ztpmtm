@@ -1,0 +1,164 @@
+
+gui.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+background
+  rotate: false
+  xy: 0, 0
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+window
+  rotate: false
+  xy: 256, 198
+  size: 98, 58
+  split: 45, 52, 35, 18
+  orig: 98, 58
+  offset: 0, 0
+  index: -1
+dialog
+  rotate: false
+  xy: 256, 120
+  size: 58, 78
+  split: 20, 37, 45, 32
+  orig: 58, 78
+  offset: 0, 0
+  index: -1
+checkbox_on
+  rotate: false
+  xy: 354, 220
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+checkbox_off
+  rotate: false
+  xy: 256, 84
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+slider_knob
+  rotate: false
+  xy: 314, 156
+  size: 28, 42
+  orig: 28, 42
+  offset: 0, 0
+  index: -1
+slider
+  rotate: false
+  xy: 256, 44
+  size: 26, 40
+  split: 9, 9, 0, 40
+  orig: 26, 40
+  offset: 0, 0
+  index: -1
+list
+  rotate: false
+  xy: 390, 229
+  size: 27, 27
+  split: 12, 11, 11, 11
+  orig: 27, 27
+  offset: 0, 0
+  index: -1
+loading_bar_unloaded
+  rotate: false
+  xy: 314, 130
+  size: 28, 26
+  split: 8, 8, 0, 26
+  orig: 28, 26
+  offset: 0, 0
+  index: -1
+loading_bar_loaded
+  rotate: false
+  xy: 417, 230
+  size: 28, 26
+  split: 8, 8, 0, 26
+  orig: 28, 26
+  offset: 0, 0
+  index: -1
+textfield
+  rotate: false
+  xy: 445, 232
+  size: 29, 24
+  split: 9, 17, 15, 6
+  orig: 29, 24
+  offset: 0, 0
+  index: -1
+button
+  rotate: false
+  xy: 292, 94
+  size: 19, 26
+  split: 7, 7, 12, 13
+  orig: 19, 26
+  offset: 0, 0
+  index: -1
+button_highlight
+  rotate: false
+  xy: 256, 18
+  size: 19, 26
+  split: 7, 7, 12, 13
+  orig: 19, 26
+  offset: 0, 0
+  index: -1
+bar_vertical
+  rotate: false
+  xy: 256, 0
+  size: 20, 18
+  split: 0, 20, 8, 8
+  orig: 20, 18
+  offset: 0, 0
+  index: -1
+button_dialog
+  rotate: false
+  xy: 354, 198
+  size: 16, 22
+  split: 7, 7, 10, 10
+  orig: 16, 22
+  offset: 0, 0
+  index: -1
+bar_horizonal
+  rotate: false
+  xy: 342, 178
+  size: 18, 20
+  split: 8, 8, 0, 20
+  orig: 18, 20
+  offset: 0, 0
+  index: -1
+flag_pl
+  rotate: false
+  xy: 474, 245
+  size: 16, 11
+  orig: 16, 11
+  offset: 0, 0
+  index: -1
+flag_en
+  rotate: false
+  xy: 370, 209
+  size: 16, 11
+  orig: 16, 11
+  offset: 0, 0
+  index: -1
+textcursor
+  rotate: false
+  xy: 282, 66
+  size: 7, 18
+  orig: 7, 18
+  offset: 0, 0
+  index: -1
+select
+  rotate: false
+  xy: 390, 228
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+hide
+  rotate: false
+  xy: 314, 129
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
