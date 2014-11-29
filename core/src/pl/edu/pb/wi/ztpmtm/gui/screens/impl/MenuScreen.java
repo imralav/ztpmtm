@@ -25,8 +25,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuScreen extends AbstractApplicationScreen {
-	private static final int EASY_DIFFICULTY = 0;
-	private static final int HARD_DIFFICULTY = 1;
 	private static MenuScreen CURRENT_INSTANCE;
 
 	public static void initiateInstance() {
@@ -105,16 +103,12 @@ public class MenuScreen extends AbstractApplicationScreen {
 			}
 
 			private GameDifficulty getDifficultyLevel() {
-				GameDifficulty gameDifficulty;
-				switch (difficultiesList.getSelectedIndex()) {
-					case EASY_DIFFICULTY:
-						gameDifficulty = GameDifficulty.EASY;
-						break;
-					case HARD_DIFFICULTY:
-					default:
-						gameDifficulty = GameDifficulty.HARD;
+				for (GameDifficulty difficulty : GameDifficulty.values()) {
+					if (difficultiesList.getSelectedIndex() == difficulty.getIndex()) {
+						return difficulty;
+					}
 				}
-				return gameDifficulty;
+				return GameDifficulty.EASY;
 			}
 
 			protected Actor prepareDialogWidgets() {
@@ -130,7 +124,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 				List<String> list = WidgetFactory.createList(ListStyle.AWESOME);
 				list.getItems().addAll(LocalizationManager.INSTANCE.getTexts(Text.DIFF_EASY, Text.DIFF_HARD));
 				list.invalidateHierarchy();
-				list.setSelectedIndex(EASY_DIFFICULTY);
+				list.setSelectedIndex(GameDifficulty.EASY.getIndex());
 				return list;
 			}
 
