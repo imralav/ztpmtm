@@ -1,7 +1,8 @@
 package pl.edu.pb.wi.ztpmtm.gui.widgets.styles;
 
 public enum ListStyle implements WidgetStyle {
-	DEFAULT("default");
+	DEFAULT("default"),
+	AWESOME("awesome");
 
 	private final String styleName;
 

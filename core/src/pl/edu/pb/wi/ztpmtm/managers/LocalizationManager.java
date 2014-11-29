@@ -85,6 +85,15 @@ public enum LocalizationManager implements ApplicationManager {
 		return i18NBundle.format(text.getName());
 	}
 
+	public String[] getTexts(Text... texts) {
+		String[] resultText = new String[texts.length];
+		for (int index = 0; index < texts.length; index++) {
+			resultText[index] = getText(texts[index]);
+		}
+
+		return resultText;
+	}
+
 	public String getText(Text text, Object... arguments) {
 		return i18NBundle.format(text.getName(), arguments);
 	}

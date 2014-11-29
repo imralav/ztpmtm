@@ -45,7 +45,13 @@ public enum Text {
 	/** Menu screen. */
 	MENU_TITLE("menuTitle"),
 	START_BUTTON("startButton"),
-	SETTINGS_BUTTON("settingsButton");
+	SETTINGS_BUTTON("settingsButton"),
+	
+	/** Difficulty choosing dialog. */
+	DIFF_DIALOG_TITLE("diffDialogTitle"),
+	DIFF_DIALOG_PROMPT("diffDialogPrompt"),
+	DIFF_EASY("diffEasy"),
+	DIFF_HARD("diffHard");
 
 	private final String textName;
 
