@@ -1,4 +1,4 @@
-package pl.edu.pb.wi.ztpmtm.gui;
+package pl.edu.pb.wi.ztpmtm.gui.utilities;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -22,6 +22,9 @@ public class WidgetData {
 		this.fillY = fillY;
 	}
 
+	// Wzorzec kreacyjny: metody fabrykujace. WidgetData przechowuje dane o aktorach (kontrolkach), ktore maja
+	// byc dodane do interfejsu, ale nie moga byc ustawione od razu (w chwili dodawania do buildera).
+	// Dzieki wielu metodom of(...), mozna szybko utworzyc dane o obiektu przy uzyciu domyslnych parametrow.
 	public static WidgetData of(Actor widget) {
 		return new WidgetData(widget, Padding.PAD_0, IGNORED_SIZE_VALUE, IGNORED_SIZE_VALUE, NO_EXPAND,
 				NO_EXPAND, NO_FILL, NO_FILL);

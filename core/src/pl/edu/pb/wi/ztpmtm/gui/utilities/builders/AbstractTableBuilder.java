@@ -1,7 +1,8 @@
-package pl.edu.pb.wi.ztpmtm.gui.builders;
+package pl.edu.pb.wi.ztpmtm.gui.utilities.builders;
 
-import pl.edu.pb.wi.ztpmtm.gui.Padding;
-import pl.edu.pb.wi.ztpmtm.gui.WidgetData;
+import pl.edu.pb.wi.ztpmtm.gui.utilities.Padding;
+import pl.edu.pb.wi.ztpmtm.gui.utilities.TableBuilder;
+import pl.edu.pb.wi.ztpmtm.gui.utilities.WidgetData;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
@@ -9,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 
-public class AbstractTableBuilder {
+public abstract class AbstractTableBuilder implements TableBuilder {
 	private final static int DEFAULT_WIDGETS_AMOUNT = 10, DEFAULT_ROWS_AMOUNT = 3;
 
 	private final Array<WidgetData> widgets;
@@ -36,6 +37,14 @@ public class AbstractTableBuilder {
 		widgets = new Array<WidgetData>(estimatedWidgetsAmount);
 		rowSizes = new IntArray(estimatedRowsAmount);
 		widgetPadding = defaultWidgetPadding;
+	}
+
+	protected IntArray getRowSizes() {
+		return rowSizes;
+	}
+
+	protected Array<WidgetData> getWidgets() {
+		return widgets;
 	}
 
 	public void setTablePadding(Padding tablePadding) {
@@ -130,6 +139,11 @@ public class AbstractTableBuilder {
 			lowestCommonMultiple = getLowestCommonMultiple(lowestCommonMultiple, values.get(index));
 		}
 		return lowestCommonMultiple;
+	}
+	
+	protected Table prepareBuiltTable(Table table) {
+		table.pack();
+		return table;
 	}
 
 }
