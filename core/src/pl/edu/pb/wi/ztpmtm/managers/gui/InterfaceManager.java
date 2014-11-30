@@ -1,6 +1,7 @@
 package pl.edu.pb.wi.ztpmtm.managers.gui;
 
 import pl.edu.pb.wi.ztpmtm.gui.screens.ApplicationScreen;
+import pl.edu.pb.wi.ztpmtm.gui.screens.impl.GameScreen;
 import pl.edu.pb.wi.ztpmtm.gui.screens.impl.LoadingScreen;
 import pl.edu.pb.wi.ztpmtm.gui.screens.impl.MenuScreen;
 import pl.edu.pb.wi.ztpmtm.managers.ApplicationManager;
@@ -35,7 +36,7 @@ public enum InterfaceManager implements ApplicationManager {
 	private void initiateScreens() {
 		LoadingScreen.initiateInstance();
 		MenuScreen.initiateInstance();
-		// LobbyScreen.initiateInstance();
+		GameScreen.initiateInstance();
 		// TODO initiate rest of screens
 	}
 
@@ -46,7 +47,7 @@ public enum InterfaceManager implements ApplicationManager {
 
 	private void createMissingScreens() {
 		MenuScreen.getInstance().create();
-		// LobbyScreen.getInstance().create();
+		GameScreen.getInstance().create();
 		// TODO create rest of the screens
 	}
 
@@ -141,6 +142,8 @@ public enum InterfaceManager implements ApplicationManager {
 	private ApplicationScreen getNewInstanceOfCurrentScreen() {
 		if (currentScreen instanceof MenuScreen) {
 			return MenuScreen.getInstance();
+		} else if (currentScreen instanceof GameScreen) {
+			return GameScreen.getInstance();
 		}
 		// // Should never happen:
 		return LoadingScreen.getInstance();
@@ -149,8 +152,8 @@ public enum InterfaceManager implements ApplicationManager {
 	private void recreateScreens() {
 		MenuScreen.initiateInstance();
 		MenuScreen.getInstance().create();
-		// LobbyScreen.initiateInstance();
-		// LobbyScreen.getInstance().create();
+		GameScreen.initiateInstance();
+		GameScreen.getInstance().create();
 		// TODO recreate other screens
 	}
 
@@ -163,7 +166,7 @@ public enum InterfaceManager implements ApplicationManager {
 	private void disposeOfScreens() {
 		LoadingScreen.destroyInstance();
 		MenuScreen.destroyInstance();
-		// LobbyScreen.destroyInstance();
+		GameScreen.destroyInstance();
 		// TODO dispose of the rest of the screens
 	}
 

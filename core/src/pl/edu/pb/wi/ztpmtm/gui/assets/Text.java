@@ -2,6 +2,7 @@ package pl.edu.pb.wi.ztpmtm.gui.assets;
 
 public enum Text {
 	/** General. */
+	EMPTY("empty"),
 	BACK("back"),
 	YES("yes"),
 	NO("no"),
@@ -40,13 +41,13 @@ public enum Text {
 
 	/** Loading screen. */
 	LOADING_TITLE("loadingTitle"),
-	LOADING_PROGRESS_LABEL("loadingProgress"), 
-	
+	LOADING_PROGRESS_LABEL("loadingProgress"),
+
 	/** Menu screen. */
 	MENU_TITLE("menuTitle"),
 	START_BUTTON("startButton"),
 	SETTINGS_BUTTON("settingsButton"),
-	
+
 	/** Difficulty choosing dialog. */
 	DIFF_DIALOG_TITLE("diffDialogTitle"),
 	DIFF_DIALOG_PROMPT("diffDialogPrompt"),

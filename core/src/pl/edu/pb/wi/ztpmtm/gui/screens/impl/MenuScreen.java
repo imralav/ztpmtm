@@ -1,6 +1,7 @@
 package pl.edu.pb.wi.ztpmtm.gui.screens.impl;
 
 import pl.edu.pb.wi.ztpmtm.game.GameDifficulty;
+import pl.edu.pb.wi.ztpmtm.game.logic.Game;
 import pl.edu.pb.wi.ztpmtm.gui.assets.Text;
 import pl.edu.pb.wi.ztpmtm.gui.screens.AbstractApplicationScreen;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.InterfaceUtilities;
@@ -95,10 +96,9 @@ public class MenuScreen extends AbstractApplicationScreen {
 				return new Runnable() {
 					@Override
 					public void run() {
-						GameDifficulty gameDifficulty = getDifficultyLevel();
-						gameDifficulty.toString(); // TODO
+						Game.prepareGame(getDifficultyLevel());
+						InterfaceManager.INSTANCE.setScreen(GameScreen.getInstance());
 					}
-
 				};
 			}
 
@@ -121,11 +121,12 @@ public class MenuScreen extends AbstractApplicationScreen {
 			}
 
 			private Actor prepareOptionList() {
-				List<String> list = WidgetFactory.createList(ListStyle.AWESOME);
-				list.getItems().addAll(LocalizationManager.INSTANCE.getTexts(Text.DIFF_EASY, Text.DIFF_HARD));
-				list.invalidateHierarchy();
-				list.setSelectedIndex(GameDifficulty.EASY.getIndex());
-				return list;
+				difficultiesList = WidgetFactory.createList(ListStyle.AWESOME);
+				difficultiesList.getItems().addAll(
+						LocalizationManager.INSTANCE.getTexts(Text.DIFF_EASY, Text.DIFF_HARD));
+				difficultiesList.invalidateHierarchy();
+				difficultiesList.setSelectedIndex(GameDifficulty.EASY.getIndex());
+				return difficultiesList;
 			}
 
 			@Override
