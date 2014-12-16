@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.Color;
  * @author MJ */
 public class DesktopLauncher {
 	private static final String KONFIGURATS = "Konfigurats";
-	private final static int DEFAULT_WIDTH = 1024/2, DEFAULT_HEIGHT = 512/2;
+	private final static int DEFAULT_WIDTH = 400, DEFAULT_HEIGHT = 600;
 
 	public static void main(String[] arg) {
 		new LwjglApplication(Core.INSTANCE, getDefaultConfiguration());
