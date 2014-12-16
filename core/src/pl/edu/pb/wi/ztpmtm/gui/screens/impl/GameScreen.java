@@ -12,10 +12,13 @@ import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.ScrollPaneStyle;
 import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.TextButtonStyle;
 import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.WindowStyle;
 import pl.edu.pb.wi.ztpmtm.managers.gui.AssetsManager;
+import pl.edu.pb.wi.ztpmtm.managers.gui.InterfaceManager;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class GameScreen extends AbstractApplicationScreen {
 	private static final String DEFAULT_POINTS_AMOUNT = "0";
@@ -84,7 +87,12 @@ public class GameScreen extends AbstractApplicationScreen {
 				false);
 		tableBuilder.append(timeLabel = WidgetFactory.createLabel(DEFAULT_TOTAL_TIME, LabelStyle.BIG_BLUE),
 				true, false);
-		tableBuilder.append(WidgetFactory.createTextButton(Text.EXIT, TextButtonStyle.DEFAULT));
+		tableBuilder.append(WidgetFactory.createTextButton(Text.EXIT, new ClickListener(){
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				InterfaceManager.INSTANCE.setScreen(MenuScreen.getInstance());
+			}
+		},TextButtonStyle.DEFAULT));
 		// TODO button action
 
 		return tableBuilder.build();
