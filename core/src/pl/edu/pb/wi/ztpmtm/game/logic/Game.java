@@ -21,7 +21,7 @@ public class Game {
 	private static final float STEP_DURATION = 1f / ((float) UPDATES_IN_SECOND);
 	private static final String SEPARATOR = ":";
 	private static final int FIRST_DOUBLE_DIGIT_NUMBER = 10;
-	private static final float PPM = 100f;
+	public static final float PPM = 100f;
 
 	private static Game CURRENT_GAME;
 
