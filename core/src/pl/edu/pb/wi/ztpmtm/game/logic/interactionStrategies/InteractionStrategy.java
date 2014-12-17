@@ -1,28 +1,31 @@
 package pl.edu.pb.wi.ztpmtm.game.logic.interactionStrategies;
 
 import pl.edu.pb.wi.ztpmtm.entity.Player;
+import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
+import pl.edu.pb.wi.ztpmtm.game.logic.Game;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public enum InteractionStrategy {
 	ICE {
 		@Override
-		public FixtureDef prepareFixture() {
-			final FixtureDef fdef = super.prepareFixture();
-			fdef.friction = 0f;
-			return fdef;
+		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+			super.setBodyData(bodyCreator, initialY);
+			final FixtureDef platformFixture = bodyCreator.getFixtureDefForName(PLATFORM_FIXTURE_NAME);
+			platformFixture.friction = 0f;
 		}
 	},
 	MUD {
 		@Override
-		public FixtureDef prepareFixture() {
-			final FixtureDef fdef = super.prepareFixture();
-			fdef.restitution = 0f;
-			fdef.friction = 0.9f;
-			return fdef;
+		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+			super.setBodyData(bodyCreator, initialY);
+			final FixtureDef platformFixture = bodyCreator.getFixtureDefForName(PLATFORM_FIXTURE_NAME);
+			platformFixture.restitution = 0f;
+			platformFixture.friction = 0.9f;
 		}
 
 		@Override
@@ -37,10 +40,9 @@ public enum InteractionStrategy {
 	},
 	RUBBER {
 		@Override
-		public FixtureDef prepareFixture() {
-			final FixtureDef fdef = super.prepareFixture();
-			fdef.restitution = 1f;
-			return fdef;
+		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+			super.setBodyData(bodyCreator, initialY);
+			bodyCreator.getFixtureDefForName(PLATFORM_FIXTURE_NAME).restitution = 1f;
 		}
 
 		@Override
@@ -51,10 +53,9 @@ public enum InteractionStrategy {
 	GRASS,
 	STONE {
 		@Override
-		public BodyDef prepareBodyDef() {
-			final BodyDef bdef = new BodyDef();
-			bdef.type = BodyType.DynamicBody;
-			return bdef;
+		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+			super.setBodyData(bodyCreator, initialY);
+			bodyCreator.setType(BodyType.DynamicBody);
 		}
 
 		@Override
@@ -75,12 +76,17 @@ public enum InteractionStrategy {
 	},
 	GHOST;
 
-	public FixtureDef prepareFixture() {
-		final FixtureDef fdef = new FixtureDef();
-		fdef.density = 1f;
-		fdef.restitution = 0.2f;
-		fdef.friction = 0.5f;
-		return fdef;
+	private static final String PLATFORM_FIXTURE_NAME = "platform";
+	private static final String SENSOR_FIXTURE_NAME = "sensor";
+	private static final float DEFAULT_HEIGHT = 35f / Game.PPM;
+	private static final float DEFAULT_WIDTH = 50f / Game.PPM; // TODO: change according to current points
+	private static final float SENSOR_DEFAULT_HEIGHT = 5f / Game.PPM;
+
+	private FixtureDef prepareDefaultFixture(final FixtureDef fixtureDef) {
+		fixtureDef.density = 1f;
+		fixtureDef.restitution = 0.2f;
+		fixtureDef.friction = 0.5f;
+		return fixtureDef;
 	};
 
 	public void beginCollision(final Player player) {
@@ -93,9 +99,23 @@ public enum InteractionStrategy {
 		return values()[MathUtils.random(values().length - 1)];
 	}
 
-	public BodyDef prepareBodyDef() {
-		final BodyDef bdef = new BodyDef();
-		bdef.type = BodyType.StaticBody;
-		return bdef;
+	public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+		final float x = 0; // TODO: losuj ixa
+		bodyCreator.setPosition(new Vector2(x, initialY));
+		bodyCreator.setFixedRotation(true);
+		bodyCreator.getBodyDef().gravityScale = 0f;
+		final FixtureDef fixtureDef = bodyCreator.createFixtureDef(PLATFORM_FIXTURE_NAME);
+		prepareDefaultFixture(fixtureDef);
+		final PolygonShape shape = new PolygonShape();
+		// TODO: set shape according to current points instead of default
+		shape.setAsBox(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		fixtureDef.shape = shape;
+
+		final FixtureDef topSensor = bodyCreator.createFixtureDef(SENSOR_FIXTURE_NAME);
+		topSensor.isSensor = true;
+		// TODO: set sensor shape
+		shape.setAsBox(DEFAULT_WIDTH / 2f, SENSOR_DEFAULT_HEIGHT / 2f, new Vector2(0, DEFAULT_HEIGHT), 0);
+		topSensor.shape = shape;
 	}
+
 }

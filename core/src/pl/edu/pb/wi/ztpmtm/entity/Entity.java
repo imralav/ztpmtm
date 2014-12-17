@@ -1,9 +1,9 @@
 package pl.edu.pb.wi.ztpmtm.entity;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 
 public interface Entity {
 	public void update(float delta);
 
-	public void render(SpriteBatch batch);
+	public void render(Batch batch);
 }

@@ -1,11 +1,10 @@
 package pl.edu.pb.wi.ztpmtm.entity.decorators;
 
 import pl.edu.pb.wi.ztpmtm.entity.B2DEntity;
+import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.World;
 
 public class StaticDecorator extends B2DEntity {
 	private Sprite sprite;
@@ -22,14 +21,14 @@ public class StaticDecorator extends B2DEntity {
 	}
 
 	@Override
-	public void render(final SpriteBatch batch) {
+	public void render(final Batch batch) {
 		entity.render(batch);
 		sprite.draw(batch);
 	}
 
 	@Override
-	protected Body prepareBody(final World world, final Object userObject) {
-		return null;
+	public BodyCreator prepareBody() {
+		return entity.prepareBody();
 	}
 
 }
