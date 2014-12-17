@@ -8,7 +8,6 @@ import pl.edu.pb.wi.ztpmtm.gui.utilities.InterfaceUtilities;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.Padding;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.TableBuilder;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.builders.OneColumnTableBuilder;
-import pl.edu.pb.wi.ztpmtm.gui.utilities.builders.StandardTableBuilder;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.factory.WidgetFactory;
 import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.LabelStyle;
 import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.ListStyle;
@@ -57,7 +56,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 
 	@Override
 	protected void createWidgets() {
-		final TableBuilder tableBuilder = new StandardTableBuilder(Padding.PAD_4);
+		final TableBuilder tableBuilder = new OneColumnTableBuilder(Padding.PAD_4);
 
 		tableBuilder.append(InterfaceUtilities.createGameTitle());
 		tableBuilder.append(createStartButton(), true, false);
