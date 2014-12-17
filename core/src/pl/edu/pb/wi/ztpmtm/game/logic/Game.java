@@ -11,13 +11,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
 public class Game {
 	public static final float PPM = 100f;
 	private static final float PLATFORM_DISTANCE = 100f / PPM;
+	private static final float PLATFORM_OFFSET = 50f / PPM;
 	private static final float MAX_STEP_DURATION = 1f;
 	private static final int UPDATES_IN_SECOND = 60;
 	private static final float STEP_DURATION = 1f / UPDATES_IN_SECOND;
@@ -36,37 +46,98 @@ public class Game {
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera b2dCamera;
 	private ViewData viewData;
+	private Body screenBottomSensor;
+
+	private Array<B2DEntity> platforms;
+	private Array<B2DEntity> platformsToDispose;
 
 	public ViewData getViewData() {
 		return viewData;
 	}
-
-	//
-	private Array<B2DEntity> platforms;
 
 	private void initiateB2D() {
 		world = new World(new Vector2(0f, -9.8f), true);
 		debugRenderer = new Box2DDebugRenderer();
 		b2dCamera = new OrthographicCamera();
 		b2dCamera.setToOrtho(false, Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM);
-
+		setupContactListener();
 		prepareWorld();
+	}
+
+	private void setupContactListener() {
+		world.setContactListener(new ContactListener() {
+			@Override
+			public void preSolve(final Contact contact, final Manifold oldManifold) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void postSolve(final Contact contact, final ContactImpulse impulse) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void endContact(final Contact contact) {
+				// TODO wywołać InteractionStrategy#endContact z aktualnej platformy
+			}
+
+			@Override
+			public void beginContact(final Contact contact) {
+				Platform platform;
+				if (contact.getFixtureA().getUserData() instanceof Platform) {
+					platform = (Platform) contact.getFixtureA().getUserData();
+					if (contact.getFixtureB().getUserData() == null) {
+						platformsToDispose.add(platform);
+						addPlatform(viewData.getHeight() + PLATFORM_OFFSET);
+					}
+					Gdx.app.log("Debug", "Platform touching");
+				}
+				if (contact.getFixtureB().getUserData() instanceof Platform) {
+					platform = (Platform) contact.getFixtureB().getUserData();
+					if (contact.getFixtureA().getUserData() == null) {
+						platformsToDispose.add(platform);
+						addPlatform(viewData.getHeight() + PLATFORM_OFFSET);
+					}
+					Gdx.app.log("Debug", "Platform touching");
+				}
+			}
+
+		});
 	}
 
 	private void prepareWorld() {
 		viewData = ViewData.prepare(Game.PPM);
 		// tworzenie platform TODO
 		platforms = new Array<B2DEntity>();
+		platformsToDispose = new Array<B2DEntity>();
 		createPlatforms();
+		createWorldBoundSensors();
+	}
+
+	private void createWorldBoundSensors() {
+		final BodyDef bodyDef = new BodyDef();
+		bodyDef.type = BodyType.StaticBody;
+		bodyDef.position.set(new Vector2(getViewData().getWidth() / 2f, 0));
+		final FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.isSensor = true;
+		final PolygonShape shape = new PolygonShape();
+		shape.setAsBox(getViewData().getWidth() / 2f, 1f / Game.PPM);
+		fixtureDef.shape = shape;
+		screenBottomSensor = world.createBody(bodyDef);
+		screenBottomSensor.createFixture(fixtureDef);
 	}
 
 	private void createPlatforms() {
-		for (float platformY = PLATFORM_DISTANCE; platformY < viewData.getHeight(); platformY +=
+		for (float platformY = PLATFORM_OFFSET; platformY <= viewData.getHeight() + PLATFORM_OFFSET; platformY +=
 				PLATFORM_DISTANCE) {
-			final B2DEntity platform = new Platform(platformY);
-			platform.createBody(world);
-			platforms.add(platform);
+			addPlatform(platformY);
 		}
+	}
+
+	private void addPlatform(final float platformY) {
+		final B2DEntity platform = new Platform(platformY);
+		platform.createBody(world);
+		platforms.add(platform);
 	}
 
 	private Game(final GameDifficulty gameDifficulty) {

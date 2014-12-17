@@ -14,7 +14,9 @@ public abstract class B2DEntity implements Entity {
 	public void createBody(final World world) {
 		body = prepareBody().createBody(world);
 		for (final Fixture fixture : body.getFixtureList()) {
-			fixture.setUserData(this);
+			if (fixture.isSensor()) {
+				fixture.setUserData(this);
+			}
 		}
 	}
 
