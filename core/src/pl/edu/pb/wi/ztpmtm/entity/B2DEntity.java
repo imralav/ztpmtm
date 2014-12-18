@@ -41,4 +41,12 @@ public abstract class B2DEntity implements Entity {
 	public void updateSprite(final Sprite sprite) {
 		// ustawia właściwości sprite na podstawie body
 	}
+
+	public void dispose(final World world) {
+		world.destroyBody(body);
+	}
+
+	public void changeFallingSpeed(final float yVelocity) {
+		body.setLinearVelocity(0, yVelocity);
+	}
 }

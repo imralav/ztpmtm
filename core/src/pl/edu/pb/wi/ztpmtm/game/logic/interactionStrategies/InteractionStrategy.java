@@ -7,7 +7,6 @@ import pl.edu.pb.wi.ztpmtm.game.logic.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
@@ -53,11 +52,11 @@ public enum InteractionStrategy {
 	},
 	GRASS,
 	STONE {
-		@Override
-		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
-			super.setBodyData(bodyCreator, initialY);
-			bodyCreator.setType(BodyType.DynamicBody);
-		}
+		// @Override
+		// public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+		// super.setBodyData(bodyCreator, initialY);
+		// bodyCreator.setType(BodyType.DynamicBody);
+		// }
 
 		@Override
 		public void beginCollision(final Player player) {
@@ -107,7 +106,7 @@ public enum InteractionStrategy {
 						- currentPlatformWidth / 2f); // TODO: losuj ixa
 		bodyCreator.setPosition(new Vector2(x, initialY));
 		bodyCreator.setFixedRotation(true);
-		bodyCreator.getBodyDef().gravityScale = 0.01f;
+		bodyCreator.getBodyDef().gravityScale = 0f;
 		final FixtureDef fixtureDef = bodyCreator.createFixtureDef(PLATFORM_FIXTURE_NAME);
 		prepareDefaultFixture(fixtureDef);
 		final PolygonShape platformShape = new PolygonShape();

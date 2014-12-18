@@ -45,5 +45,4 @@ public class Platform extends B2DEntity {
 		interactionStrategy.setBodyData(bodyCreator, initialY);
 		return bodyCreator;
 	}
-
 }

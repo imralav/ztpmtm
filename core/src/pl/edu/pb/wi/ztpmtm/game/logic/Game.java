@@ -25,6 +25,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
 public class Game {
+	private static final int INITIAL_FALLING_SPEED = 20;
 	public static final float PPM = 100f;
 	private static final float PLATFORM_DISTANCE = 100f / PPM;
 	private static final float PLATFORM_OFFSET = 50f / PPM;
@@ -38,6 +39,7 @@ public class Game {
 
 	private final Calendar totalTime;
 	private float timePassed = 0f;
+	private float timeElapsed = 0f;
 	private int stepsPassed = 0;
 	private final float pointsAmount = 0f;
 
@@ -50,6 +52,7 @@ public class Game {
 
 	private Array<B2DEntity> platforms;
 	private Array<B2DEntity> platformsToDispose;
+	private int amountOfPlatformsToCreate = 0;
 
 	public ViewData getViewData() {
 		return viewData;
@@ -88,7 +91,8 @@ public class Game {
 					platform = (Platform) contact.getFixtureA().getUserData();
 					if (contact.getFixtureB().getUserData() == null) {
 						platformsToDispose.add(platform);
-						addPlatform(viewData.getHeight() + PLATFORM_OFFSET);
+						platforms.removeValue(platform, true);
+						amountOfPlatformsToCreate++;
 					}
 					Gdx.app.log("Debug", "Platform touching");
 				}
@@ -96,7 +100,8 @@ public class Game {
 					platform = (Platform) contact.getFixtureB().getUserData();
 					if (contact.getFixtureA().getUserData() == null) {
 						platformsToDispose.add(platform);
-						addPlatform(viewData.getHeight() + PLATFORM_OFFSET);
+						platforms.removeValue(platform, true);
+						amountOfPlatformsToCreate++;
 					}
 					Gdx.app.log("Debug", "Platform touching");
 				}
@@ -177,6 +182,7 @@ public class Game {
 	}
 
 	public void update(float delta) {
+		timeElapsed += delta;
 		delta %= MAX_STEP_DURATION;
 		timePassed += delta;
 		while (timePassed >= STEP_DURATION) {
@@ -184,7 +190,24 @@ public class Game {
 			updateCalendar(delta);
 			// TODO update Box2D world with STEP_DURATION
 			world.step(STEP_DURATION, 6, 2);
+			addNewPlatforms();
+			removePlatforms();
+			updatePlatformsSpeed(-(2f * (float) Math.sqrt(timeElapsed) + INITIAL_FALLING_SPEED) / PPM);
 		}
+	}
+
+	private void removePlatforms() {
+		for (final B2DEntity entity : platformsToDispose) {
+			entity.dispose(world);
+		}
+		platformsToDispose.clear();
+	}
+
+	private void addNewPlatforms() {
+		for (int i = 0; i < amountOfPlatformsToCreate; i++) {
+			addPlatform(viewData.getHeight() + PLATFORM_OFFSET);
+		}
+		amountOfPlatformsToCreate = 0;
 	}
 
 	private void updateCalendar(final float delta) {
@@ -197,6 +220,16 @@ public class Game {
 	public void render(final Batch batch) {
 		// TODO render background, then sprites
 		debugRenderer.render(world, b2dCamera.combined);
+		renderPlatforms(batch);
+	}
+
+	private void updatePlatformsSpeed(final float yVelocity) {
+		for (final B2DEntity entity : platforms) {
+			entity.changeFallingSpeed(yVelocity);
+		}
+	}
+
+	private void renderPlatforms(final Batch batch) {
 		for (final B2DEntity entity : platforms) {
 			entity.render(batch);
 		}
