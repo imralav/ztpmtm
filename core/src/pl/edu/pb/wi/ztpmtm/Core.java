@@ -13,12 +13,16 @@ import com.badlogic.gdx.graphics.GL20;
 
 // Wzorzec kreacyjny: singleton. Istnieje jedna instancja słuchacza aplikacji.
 public enum Core implements ApplicationListener {
+
 	INSTANCE;
+
 
 	@Override
 	public void create() {
-		initiateManagers();
-		InterfaceManager.INSTANCE.showFirstScreen();
+			initiateManagers();
+			InterfaceManager.INSTANCE.showFirstScreen();
+		
+
 	}
 
 	private void initiateManagers() {
@@ -66,8 +70,9 @@ public enum Core implements ApplicationListener {
 	}
 
 	private static class Managers { // TODO add new managers
-		private final static ApplicationManager[] MANAGERS = { LocalizationManager.INSTANCE,
-				AssetsManager.INSTANCE, InterfaceManager.INSTANCE, MusicManager.INSTANCE,
+		private final static ApplicationManager[] MANAGERS = {
+				LocalizationManager.INSTANCE, AssetsManager.INSTANCE,
+				InterfaceManager.INSTANCE, MusicManager.INSTANCE,
 				DialogManager.INSTANCE };
 	}
 

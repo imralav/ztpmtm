@@ -64,7 +64,7 @@ public class GameScreen extends AbstractApplicationScreen {
 	@Override
 	protected void createWidgets() {
 		// Bez buildera, bo zaawansowany uklad.
-		Table table = new Table();
+		final Table table = new Table();
 
 		table.setFillParent(true);
 		table.add(WidgetFactory.createScrollPane(createHudWidgets(), ScrollPaneStyle.DEFAULT))
@@ -80,33 +80,33 @@ public class GameScreen extends AbstractApplicationScreen {
 	}
 
 	private Actor createHudWidgets() {
-		TableBuilder tableBuilder = new StandardTableBuilder(Padding.PAD_2);
+		final TableBuilder tableBuilder = new StandardTableBuilder(Padding.PAD_2);
 
 		tableBuilder.append(
 				pointsLabel = WidgetFactory.createLabel(DEFAULT_POINTS_AMOUNT, LabelStyle.BIG_BLUE), true,
 				false);
 		tableBuilder.append(timeLabel = WidgetFactory.createLabel(DEFAULT_TOTAL_TIME, LabelStyle.BIG_BLUE),
 				true, false);
-		tableBuilder.append(WidgetFactory.createTextButton(Text.EXIT, new ClickListener(){
+		tableBuilder.append(WidgetFactory.createTextButton(Text.EXIT, new ClickListener() {
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked(final InputEvent event, final float x, final float y) {
 				InterfaceManager.INSTANCE.setScreen(MenuScreen.getInstance());
 			}
-		},TextButtonStyle.DEFAULT));
+		}, TextButtonStyle.DEFAULT));
 		// TODO button action
 
 		return tableBuilder.build();
 	}
 
 	@Override
-	public void render(float delta) {
+	public void render(final float delta) {
 		updateGameData(delta);
-		Game.getCurrentGame().render();
+		Game.getCurrentGame().render(getStage().getBatch());
 		super.render(delta);
 	}
 
-	private void updateGameData(float delta) {
-		Game currentGame = Game.getCurrentGame();
+	private void updateGameData(final float delta) {
+		final Game currentGame = Game.getCurrentGame();
 		currentGame.update(delta);
 		pointsLabel.setText(currentGame.getPointsAmountToDisplay());
 		timeLabel.setText(currentGame.getTotalGameDuration());

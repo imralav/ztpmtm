@@ -1,19 +1,24 @@
 package pl.edu.pb.wi.ztpmtm.entity;
 
+import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class B2DEntity implements Entity {
 	protected Body body;
 
-	public void createBody(final World world, final Object userObject) {
-		body = prepareBody(world, userObject);
+	public void createBody(final World world) {
+		body = prepareBody().createBody(world);
+		for (final Fixture fixture : body.getFixtureList()) {
+			fixture.setUserData(this);
+		}
 	}
 
-	protected abstract Body prepareBody(final World world, final Object userObject);
+	public abstract BodyCreator prepareBody();
 
 	public float getScreenX() {
 		return body.getPosition().x * Game.PPM;

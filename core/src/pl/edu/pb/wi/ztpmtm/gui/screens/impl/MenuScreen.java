@@ -8,6 +8,7 @@ import pl.edu.pb.wi.ztpmtm.gui.utilities.InterfaceUtilities;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.Padding;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.TableBuilder;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.builders.OneColumnTableBuilder;
+import pl.edu.pb.wi.ztpmtm.gui.utilities.builders.StandardTableBuilder;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.factory.WidgetFactory;
 import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.LabelStyle;
 import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.ListStyle;
@@ -56,7 +57,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 
 	@Override
 	protected void createWidgets() {
-		TableBuilder tableBuilder = new OneColumnTableBuilder(Padding.PAD_4);
+		final TableBuilder tableBuilder = new StandardTableBuilder(Padding.PAD_4);
 
 		tableBuilder.append(InterfaceUtilities.createGameTitle());
 		tableBuilder.append(createStartButton(), true, false);
@@ -69,7 +70,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 	private Actor createStartButton() {
 		return WidgetFactory.createTextButton(Text.START_BUTTON, new ClickListener() {
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked(final InputEvent event, final float x, final float y) {
 				showDifficultyChoosingDialog();
 			}
 		}, TextButtonStyle.DEFAULT);
@@ -103,7 +104,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 			}
 
 			private GameDifficulty getDifficultyLevel() {
-				for (GameDifficulty difficulty : GameDifficulty.values()) {
+				for (final GameDifficulty difficulty : GameDifficulty.values()) {
 					if (difficultiesList.getSelectedIndex() == difficulty.getIndex()) {
 						return difficulty;
 					}
@@ -112,7 +113,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 			}
 
 			protected Actor prepareDialogWidgets() {
-				TableBuilder tableBuilder = new OneColumnTableBuilder(Padding.PAD_4);
+				final TableBuilder tableBuilder = new OneColumnTableBuilder(Padding.PAD_4);
 
 				tableBuilder.append(WidgetFactory.createLabel(Text.DIFF_DIALOG_PROMPT, LabelStyle.DEFAULT));
 				tableBuilder.append(prepareOptionList());
@@ -130,7 +131,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 			}
 
 			@Override
-			protected void result(Object object) {
+			protected void result(final Object object) {
 				if (object instanceof Runnable) {
 					((Runnable) object).run();
 				}
@@ -142,7 +143,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 		return WidgetFactory.createTextButton(Text.SETTINGS, new ClickListener() {
 			// Wzorzec projektowy Polecenie - kod zawarty w zmiennej.
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked(final InputEvent event, final float x, final float y) {
 				DialogManager.INSTANCE.showSettingsDialog();
 			};
 		}, TextButtonStyle.DEFAULT);
@@ -152,7 +153,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 		return WidgetFactory.createTextButton(Text.EXIT, new ClickListener() {
 			// Wzorzec projektowy Polecenie - kod zawarty w zmiennej.
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked(final InputEvent event, final float x, final float y) {
 				DialogManager.INSTANCE.showExitPromptPopUp();
 			};
 		}, TextButtonStyle.DEFAULT);
