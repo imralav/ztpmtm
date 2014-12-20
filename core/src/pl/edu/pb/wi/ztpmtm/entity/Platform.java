@@ -61,7 +61,8 @@ public class Platform extends B2DEntity {
 		sprite.setRegion(region);
 	}
 
-	public void initialPush(final float force) {
+	public void pushDown(final float force) {
+		body.setLinearVelocity(0, 0);
 		body.applyLinearImpulse(new Vector2(0, force), body.getWorldCenter(), true);
 	}
 }

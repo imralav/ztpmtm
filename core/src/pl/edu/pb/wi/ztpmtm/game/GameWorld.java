@@ -26,16 +26,23 @@ public class GameWorld {
 	private static final float PLATFORM_DISTANCE = 150f / Game.PPM;
 	private static final float PLATFORM_OFFSET = 50f / Game.PPM;
 
+	private float platformForceChangeTime = 0;
+
 	private World world;
 
 	private Array<B2DEntity> platforms;
 	private Array<B2DEntity> platformsToDispose;
-	private boolean createPlatform = false;
+	private boolean shouldCreatePlatform = false;
+	private boolean shouldUpdatePlatformForce = false;
 	private TextureAtlas platformAtlas;
+	private static final float INITIAL_PLATFORM_FORCE = -1f;
+	private static final float PLATFORM_FORCE_CHANGE_INTERVAL = 1f / 2f;
+	private float platformForce = INITIAL_PLATFORM_FORCE;
 
 	private Player player;
 
 	private Body screenBottomSensor;
+	private double elapsedTime = 0;
 
 	public GameWorld() {
 		initiateB2D();
@@ -80,11 +87,19 @@ public class GameWorld {
 		final Platform platform = new Platform(platformY);
 		platform.createBody(world);
 		platform.setRegion(platformAtlas.findRegion(platform.getInteractionStrategy().getTextureName()));
-		platform.initialPush(-1f);
+		platform.pushDown(platformForce);
 		platforms.add(platform);
 	}
 
 	public void update(final float delta) {
+		platformForceChangeTime += delta;
+		elapsedTime += delta;
+		if (platformForceChangeTime >= PLATFORM_FORCE_CHANGE_INTERVAL) {
+			platformForceChangeTime %= PLATFORM_FORCE_CHANGE_INTERVAL;
+			platformForce = INITIAL_PLATFORM_FORCE - (float) Math.sqrt(elapsedTime);
+			shouldUpdatePlatformForce = true;
+		}
+		Gdx.app.log("Debug", "platformForce: " + platformForce);
 		world.step(Game.STEP_DURATION, 6, 2);
 		addNewPlatforms();
 		removePlatforms();
@@ -95,7 +110,11 @@ public class GameWorld {
 	private void updatePlatforms(final float delta) {
 		for (final B2DEntity entity : platforms) {
 			entity.update(delta);
+			if (shouldUpdatePlatformForce) {
+				((Platform) entity).pushDown(platformForce);
+			}
 		}
+		shouldUpdatePlatformForce = false;
 	}
 
 	private void removePlatforms() {
@@ -106,9 +125,9 @@ public class GameWorld {
 	}
 
 	private void addNewPlatforms() {
-		if (createPlatform) {
+		if (shouldCreatePlatform) {
 			addPlatform(Game.getCurrentGame().getViewData().getHeight() + PLATFORM_DISTANCE);
-			createPlatform = false;
+			shouldCreatePlatform = false;
 		}
 	}
 
@@ -134,7 +153,7 @@ public class GameWorld {
 					if (contact.getFixtureB().getUserData() == null) {
 						platformsToDispose.add(platform);
 						platforms.removeValue(platform, true);
-						createPlatform = true;
+						shouldCreatePlatform = true;
 					}
 					Gdx.app.log("Debug", "Platform touching");
 				}
@@ -143,7 +162,7 @@ public class GameWorld {
 					if (contact.getFixtureA().getUserData() == null) {
 						platformsToDispose.add(platform);
 						platforms.removeValue(platform, true);
-						createPlatform = true;
+						shouldCreatePlatform = true;
 					}
 					Gdx.app.log("Debug", "Platform touching");
 				}
