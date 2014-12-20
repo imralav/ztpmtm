@@ -33,8 +33,9 @@ public class Player extends AnimatedEntity {
 
 	private Sprite sprite;
 	private float speed = 10;
+
 	private AnimationType currentAnimation;
-	private Map<AnimationType, FrameContainer> animation;
+	private final Map<AnimationType, FrameContainer> animation;
 
 	public Player(final World world) {
 		animation = new HashMap<AnimationType, FrameContainer>();
@@ -48,13 +49,12 @@ public class Player extends AnimatedEntity {
 		animation.get(currentAnimation).update(delta);
 		updateSprite(sprite);
 		handleInput(delta);	
-		
+
 	}
 
 	@Override
 	public void render(final Batch batch) {
 		sprite.draw(batch);
-
 	}
 
 	@Override
@@ -64,24 +64,22 @@ public class Player extends AnimatedEntity {
 		bodyCreator.setType(BodyType.DynamicBody);
 		FixtureDef fixtureDef = bodyCreator.createFixtureDef("body");
 		PolygonShape shape = new PolygonShape();
+
 		shape.setAsBox(10f / Game.PPM, 10f / Game.PPM);
 		fixtureDef.shape = shape;
 		return bodyCreator;
 	}
 
 	private void setAnimations() {
-		TextureAtlas atlas = AssetsManager.INSTANCE.getAsset(Asset.PLAYER, TextureAtlas.class);
-		animation.put(AnimationType.WALK,
-				new FrameContainer(WALKING_FRAMERATE, atlas.findRegions(WALK)));
-		animation.put(AnimationType.IDLE,
-				new FrameContainer(IDLE_FRAMERATE, atlas.findRegions(IDLE)));
-		animation.put(AnimationType.JUMP,
-				new FrameContainer(JUMP_FRAMERATE, atlas.findRegions(JUMP)));
+		final TextureAtlas atlas = AssetsManager.INSTANCE.getAsset(Asset.PLAYER, TextureAtlas.class);
+		animation.put(AnimationType.WALK, new FrameContainer(WALKING_FRAMERATE, atlas.findRegions(WALK)));
+		animation.put(AnimationType.IDLE, new FrameContainer(IDLE_FRAMERATE, atlas.findRegions(IDLE)));
+		animation.put(AnimationType.JUMP, new FrameContainer(JUMP_FRAMERATE, atlas.findRegions(JUMP)));
 
 		currentAnimation = AnimationType.IDLE;
 	}
-	
-	public void draw(SpriteBatch batch) {
+
+	public void draw(final SpriteBatch batch) {
 		sprite.draw(batch);
 	}
 	
@@ -101,6 +99,6 @@ public class Player extends AnimatedEntity {
 
 			body.applyForceToCenter(0f, 100f, true);
 		}
-}
+	}
 
 }

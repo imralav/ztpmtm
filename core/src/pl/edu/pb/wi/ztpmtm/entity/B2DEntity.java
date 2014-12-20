@@ -1,6 +1,7 @@
 package pl.edu.pb.wi.ztpmtm.entity;
 
 import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
+import pl.edu.pb.wi.ztpmtm.entity.decorators.helpers.DrawData;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -42,11 +43,13 @@ public abstract class B2DEntity implements Entity {
 		sprite.setPosition(body.getPosition().x*Game.PPM, body.getPosition().y*Game.PPM);
 	}
 
+	public void updateSprite(final DrawData drawData) {
+		drawData.x = body.getPosition().x * Game.PPM;
+		drawData.y = body.getPosition().y * Game.PPM;
+	}
+
 	public void dispose(final World world) {
 		world.destroyBody(body);
 	}
 
-	public void changeFallingSpeed(final float yVelocity) {
-		body.setLinearVelocity(0, yVelocity);
-	}
 }
