@@ -78,7 +78,7 @@ public enum InteractionStrategy {
 	private static final String PLATFORM_FIXTURE_NAME = "platform";
 	private static final String SENSOR_FIXTURE_NAME = "sensor";
 	private static final float DEFAULT_HEIGHT = 35f / Game.PPM;
-	private static final float DEFAULT_WIDTH = 50f / Game.PPM; // TODO: change according to current points
+	private static final float DEFAULT_WIDTH = 50f / Game.PPM;
 	private static final float SENSOR_DEFAULT_HEIGHT = 5f / Game.PPM;
 	private String textureName;
 
@@ -107,21 +107,19 @@ public enum InteractionStrategy {
 		final float currentPlatformWidth = Game.getCurrentGame().getCurrentPlatformWidth() / Game.PPM;
 		final float x =
 				MathUtils.random(currentPlatformWidth / 2f, Gdx.graphics.getWidth() / Game.PPM
-						- currentPlatformWidth / 2f); // TODO: losuj ixa
+						- currentPlatformWidth / 2f);
 		bodyCreator.setPosition(new Vector2(x, initialY));
 		bodyCreator.setFixedRotation(true);
 		bodyCreator.getBodyDef().gravityScale = 0f;
 		final FixtureDef fixtureDef = bodyCreator.createFixtureDef(PLATFORM_FIXTURE_NAME);
 		prepareDefaultFixture(fixtureDef);
 		final PolygonShape platformShape = new PolygonShape();
-		// TODO: set shape according to current points instead of default
 		platformShape.setAsBox(currentPlatformWidth / 2f, DEFAULT_HEIGHT / 2f);
 		fixtureDef.shape = platformShape;
 
 		final FixtureDef topSensor = bodyCreator.createFixtureDef(SENSOR_FIXTURE_NAME);
 		topSensor.isSensor = true;
 		final PolygonShape sensorShape = new PolygonShape();
-		// TODO: set sensor shape
 		sensorShape.setAsBox(currentPlatformWidth / 2f, SENSOR_DEFAULT_HEIGHT / 2f, new Vector2(0,
 				DEFAULT_HEIGHT / 2f), 0);
 		topSensor.shape = sensorShape;

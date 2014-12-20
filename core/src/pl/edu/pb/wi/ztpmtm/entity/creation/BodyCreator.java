@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class BodyCreator {
-	private static final BodyType DEFAULT_BODY_TYPE = BodyType.DynamicBody;
+	private static final BodyType DEFAULT_BODY_TYPE = BodyType.KinematicBody;
 	private final BodyDef bodyDef;
 	private final ObjectMap<String, FixtureDef> fixtureDefs;
 

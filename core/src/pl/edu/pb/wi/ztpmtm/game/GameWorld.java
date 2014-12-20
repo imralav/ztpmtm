@@ -4,6 +4,8 @@ import pl.edu.pb.wi.ztpmtm.entity.B2DEntity;
 import pl.edu.pb.wi.ztpmtm.entity.Platform;
 import pl.edu.pb.wi.ztpmtm.entity.Player;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
+import pl.edu.pb.wi.ztpmtm.game.logic.collisions.Bits;
+import pl.edu.pb.wi.ztpmtm.game.logic.collisions.CollisionFilter;
 import pl.edu.pb.wi.ztpmtm.gui.assets.Asset;
 import pl.edu.pb.wi.ztpmtm.managers.gui.AssetsManager;
 
@@ -16,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -71,6 +74,8 @@ public class GameWorld {
 		final PolygonShape shape = new PolygonShape();
 		shape.setAsBox(Game.getCurrentGame().getViewData().getWidth() / 2f, 1f / Game.PPM);
 		fixtureDef.shape = shape;
+		fixtureDef.filter.categoryBits = Bits.WORLD_BOUND_SENSOR_CATEGORY_BIT;
+		fixtureDef.filter.maskBits = Bits.PLATFORM_CATEGORY_BIT | Bits.PLAYER_CATEGORY_BIT;
 		screenBottomSensor = world.createBody(bodyDef);
 		screenBottomSensor.createFixture(fixtureDef);
 	}
@@ -87,7 +92,7 @@ public class GameWorld {
 		final Platform platform = new Platform(platformY);
 		platform.createBody(world);
 		platform.setRegion(platformAtlas.findRegion(platform.getInteractionStrategy().getTextureName()));
-		platform.pushDown(platformForce);
+		platform.updateFallingSpeed(platformForce);
 		platforms.add(platform);
 	}
 
@@ -96,10 +101,9 @@ public class GameWorld {
 		elapsedTime += delta;
 		if (platformForceChangeTime >= PLATFORM_FORCE_CHANGE_INTERVAL) {
 			platformForceChangeTime %= PLATFORM_FORCE_CHANGE_INTERVAL;
-			platformForce = INITIAL_PLATFORM_FORCE - (float) Math.sqrt(elapsedTime);
+			platformForce = INITIAL_PLATFORM_FORCE - (float) Math.sqrt(elapsedTime / 1000f);
 			shouldUpdatePlatformForce = true;
 		}
-		Gdx.app.log("Debug", "platformForce: " + platformForce);
 		world.step(Game.STEP_DURATION, 6, 2);
 		addNewPlatforms();
 		removePlatforms();
@@ -107,13 +111,39 @@ public class GameWorld {
 		player.update(delta);
 	}
 
+	/**
+	 * Updates data connected to platforms:
+	 * 1. general Entity#update()
+	 * 2. update of platforms' falling speed
+	 * 3. update of platforms' collision filters
+	 * @param delta time between since last update
+	 */
 	private void updatePlatforms(final float delta) {
+		int platformsAbove = 0;
+		int platformsBelow = 0;
 		for (final B2DEntity entity : platforms) {
 			entity.update(delta);
+			final Platform platform = (Platform) entity;
 			if (shouldUpdatePlatformForce) {
-				((Platform) entity).pushDown(platformForce);
+				platform.updateFallingSpeed(platformForce);
+			}
+			// is platform below the player?
+			if (platform.getDrawData().y + platform.getSprite().getRegion().getRegionHeight() < player
+					.getSprite().getY()) {
+				// apply new filter to all platform fixtures
+				for (final Fixture fixture : platform.getBody().getFixtureList()) {
+					fixture.setFilterData(CollisionFilter.PLATFORM_BELOW_PLAYER.getFilter());
+				}
+				platformsBelow++;
+			} else {
+				// apply new filter to all platform fixtures
+				for (final Fixture fixture : platform.getBody().getFixtureList()) {
+					fixture.setFilterData(CollisionFilter.PLATFORM_ABOVE_PLAYER.getFilter());
+				}
+				platformsAbove++;
 			}
 		}
+		// Gdx.app.log("Debug", "platforms below: " + platformsBelow + " platforms above: " + platformsAbove);
 		shouldUpdatePlatformForce = false;
 	}
 

@@ -7,7 +7,6 @@ import pl.edu.pb.wi.ztpmtm.game.logic.interactionStrategies.InteractionStrategy;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 
 public class Platform extends B2DEntity {
@@ -61,8 +60,21 @@ public class Platform extends B2DEntity {
 		sprite.setRegion(region);
 	}
 
-	public void pushDown(final float force) {
-		body.setLinearVelocity(0, 0);
-		body.applyLinearImpulse(new Vector2(0, force), body.getWorldCenter(), true);
+	public void updateFallingSpeed(final float velocity) {
+		body.setLinearVelocity(0, velocity);
+	}
+
+	/**
+	 * @return the drawData
+	 */
+	public DrawData getDrawData() {
+		return drawData;
+	}
+
+	/**
+	 * @return the sprite
+	 */
+	public TiledDrawable getSprite() {
+		return sprite;
 	}
 }

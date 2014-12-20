@@ -7,6 +7,7 @@ import pl.edu.pb.wi.ztpmtm.animation.AnimationType;
 import pl.edu.pb.wi.ztpmtm.animation.FrameContainer;
 import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
+import pl.edu.pb.wi.ztpmtm.game.logic.collisions.CollisionFilter;
 import pl.edu.pb.wi.ztpmtm.gui.assets.Asset;
 import pl.edu.pb.wi.ztpmtm.managers.gui.AssetsManager;
 
@@ -31,8 +32,8 @@ public class Player extends AnimatedEntity {
 	private static final float JUMP_FRAMERATE = 1;
 	private static final String JUMP = "jump";
 
-	private Sprite sprite;
-	private float speed = 10;
+	private final Sprite sprite;
+	private final float speed = 10;
 
 	private AnimationType currentAnimation;
 	private final Map<AnimationType, FrameContainer> animation;
@@ -41,14 +42,16 @@ public class Player extends AnimatedEntity {
 		animation = new HashMap<AnimationType, FrameContainer>();
 		setAnimations();
 		sprite = new Sprite(animation.get(currentAnimation).getCurrentRegion());
+		sprite.setOriginCenter();
 		createBody(world);
 	}
 
 	@Override
 	public void update(final float delta) {
 		animation.get(currentAnimation).update(delta);
+		sprite.setRegion(animation.get(currentAnimation).getCurrentRegion());
 		updateSprite(sprite);
-		handleInput(delta);	
+		handleInput(delta);
 
 	}
 
@@ -59,14 +62,17 @@ public class Player extends AnimatedEntity {
 
 	@Override
 	public BodyCreator prepareBody() {
-		BodyCreator bodyCreator = new BodyCreator();
-		bodyCreator.setPosition(new Vector2(Gdx.graphics.getWidth() / 2f,Gdx.graphics.getHeight() / 2f ));
+		final BodyCreator bodyCreator = new BodyCreator();
+		bodyCreator.setPosition(new Vector2(Game.getCurrentGame().getViewData().getWidth() / 2f, Game
+				.getCurrentGame().getViewData().getHeight() / 2f));
 		bodyCreator.setType(BodyType.DynamicBody);
-		FixtureDef fixtureDef = bodyCreator.createFixtureDef("body");
-		PolygonShape shape = new PolygonShape();
+		final FixtureDef fixtureDef = bodyCreator.createFixtureDef("body");
+		final PolygonShape shape = new PolygonShape();
 
-		shape.setAsBox(10f / Game.PPM, 10f / Game.PPM);
+		shape.setAsBox(sprite.getWidth() / 2f / Game.PPM, sprite.getHeight() / 2f / Game.PPM);
 		fixtureDef.shape = shape;
+		fixtureDef.filter.categoryBits = CollisionFilter.PLAYER.getFilter().categoryBits;
+		fixtureDef.filter.maskBits = CollisionFilter.PLAYER.getFilter().maskBits;
 		return bodyCreator;
 	}
 
@@ -82,8 +88,8 @@ public class Player extends AnimatedEntity {
 	public void draw(final SpriteBatch batch) {
 		sprite.draw(batch);
 	}
-	
-	public void handleInput(float delta) {
+
+	public void handleInput(final float delta) {
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 			currentAnimation = AnimationType.WALK;
 			body.applyLinearImpulse(new Vector2(-speed / Game.PPM, 0), body.getWorldCenter(), true);
@@ -93,12 +99,18 @@ public class Player extends AnimatedEntity {
 			currentAnimation = AnimationType.WALK;
 			sprite.setScale(1, 1);
 		} else {
-			currentAnimation = AnimationType.JUMP;
+			currentAnimation = AnimationType.IDLE;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-
-			body.applyForceToCenter(0f, 100f, true);
+			body.applyLinearImpulse(new Vector2(0, 1f), body.getWorldCenter(), true);
 		}
+	}
+
+	/**
+	 * @return the sprite
+	 */
+	public Sprite getSprite() {
+		return sprite;
 	}
 
 }

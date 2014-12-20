@@ -40,7 +40,8 @@ public abstract class B2DEntity implements Entity {
 	}
 
 	public void updateSprite(final Sprite sprite) {
-		sprite.setPosition(body.getPosition().x*Game.PPM, body.getPosition().y*Game.PPM);
+		sprite.setPosition(body.getPosition().x * Game.PPM - sprite.getWidth() / 2f, body.getPosition().y
+				* Game.PPM - sprite.getHeight() / 2f);
 	}
 
 	public void updateSprite(final DrawData drawData) {
@@ -50,6 +51,13 @@ public abstract class B2DEntity implements Entity {
 
 	public void dispose(final World world) {
 		world.destroyBody(body);
+	}
+
+	/**
+	 * @return the body
+	 */
+	public Body getBody() {
+		return body;
 	}
 
 }
