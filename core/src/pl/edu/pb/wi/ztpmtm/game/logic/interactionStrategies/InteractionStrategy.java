@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public enum InteractionStrategy {
-	ICE {
+	ICE("ice") {
 		@Override
 		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
 			super.setBodyData(bodyCreator, initialY);
@@ -19,7 +19,7 @@ public enum InteractionStrategy {
 			platformFixture.friction = 0f;
 		}
 	},
-	MUD {
+	MUD("mud") {
 		@Override
 		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
 			super.setBodyData(bodyCreator, initialY);
@@ -38,20 +38,20 @@ public enum InteractionStrategy {
 			// TODO: zdejmuje SLOWED
 		}
 	},
-	RUBBER {
-		@Override
-		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
-			super.setBodyData(bodyCreator, initialY);
-			bodyCreator.getFixtureDefForName(PLATFORM_FIXTURE_NAME).restitution = 1f;
-		}
-
-		@Override
-		public void beginCollision(final Player player) {
-			// TODO wybij w górę
-		}
-	},
-	GRASS,
-	STONE {
+	// RUBBER("rubber") {
+	// @Override
+	// public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+	// super.setBodyData(bodyCreator, initialY);
+	// bodyCreator.getFixtureDefForName(PLATFORM_FIXTURE_NAME).restitution = 1f;
+	// }
+	//
+	// @Override
+	// public void beginCollision(final Player player) {
+	// // TODO wybij w górę
+	// }
+	// },
+	GRASS("grass"),
+	STONE("stone") {
 		// @Override
 		// public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
 		// super.setBodyData(bodyCreator, initialY);
@@ -63,7 +63,7 @@ public enum InteractionStrategy {
 			// TODO stone opada przy kolizji
 		}
 	},
-	SHROOM {
+	SHROOM("mud") {
 		@Override
 		public void beginCollision(final Player player) {
 			// TODO ustawia status INVERT_INPUT
@@ -73,14 +73,18 @@ public enum InteractionStrategy {
 		public void endCollision(final Player player) {
 			// TODO zdejmuje status INVERT_INPUT
 		}
-	},
-	GHOST;
+	};
 
 	private static final String PLATFORM_FIXTURE_NAME = "platform";
 	private static final String SENSOR_FIXTURE_NAME = "sensor";
 	private static final float DEFAULT_HEIGHT = 35f / Game.PPM;
 	private static final float DEFAULT_WIDTH = 50f / Game.PPM; // TODO: change according to current points
 	private static final float SENSOR_DEFAULT_HEIGHT = 5f / Game.PPM;
+	private String textureName;
+
+	private InteractionStrategy(final String textureName) {
+		this.textureName = textureName;
+	}
 
 	private FixtureDef prepareDefaultFixture(final FixtureDef fixtureDef) {
 		fixtureDef.density = 1f;
@@ -100,7 +104,7 @@ public enum InteractionStrategy {
 	}
 
 	public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
-		final float currentPlatformWidth = DEFAULT_WIDTH;
+		final float currentPlatformWidth = Game.getCurrentGame().getCurrentPlatformWidth() / Game.PPM;
 		final float x =
 				MathUtils.random(currentPlatformWidth / 2f, Gdx.graphics.getWidth() / Game.PPM
 						- currentPlatformWidth / 2f); // TODO: losuj ixa
@@ -111,16 +115,23 @@ public enum InteractionStrategy {
 		prepareDefaultFixture(fixtureDef);
 		final PolygonShape platformShape = new PolygonShape();
 		// TODO: set shape according to current points instead of default
-		platformShape.setAsBox(currentPlatformWidth, DEFAULT_HEIGHT / 2f);
+		platformShape.setAsBox(currentPlatformWidth / 2f, DEFAULT_HEIGHT / 2f);
 		fixtureDef.shape = platformShape;
 
 		final FixtureDef topSensor = bodyCreator.createFixtureDef(SENSOR_FIXTURE_NAME);
 		topSensor.isSensor = true;
 		final PolygonShape sensorShape = new PolygonShape();
 		// TODO: set sensor shape
-		sensorShape.setAsBox(currentPlatformWidth, SENSOR_DEFAULT_HEIGHT / 2f, new Vector2(0,
+		sensorShape.setAsBox(currentPlatformWidth / 2f, SENSOR_DEFAULT_HEIGHT / 2f, new Vector2(0,
 				DEFAULT_HEIGHT / 2f), 0);
 		topSensor.shape = sensorShape;
+	}
+
+	/**
+	 * @return the textureName
+	 */
+	public String getTextureName() {
+		return textureName;
 	}
 
 }

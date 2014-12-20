@@ -29,11 +29,11 @@ public class Player extends AnimatedEntity {
 	private static final float JUMP_FRAMERATE = 1;
 	private static final String JUMP = "jump";
 
-	private Sprite sprite;
-	private float elapsedTime = 0;
-	private float speed = 10;
+	private final Sprite sprite;
+	private final float elapsedTime = 0;
+	private final float speed = 10;
 	private AnimationType currentAnimation;
-	private Map<AnimationType, FrameContainer> animation;
+	private final Map<AnimationType, FrameContainer> animation;
 
 	public Player(final World world) {
 		animation = new HashMap<AnimationType, FrameContainer>();
@@ -46,58 +46,54 @@ public class Player extends AnimatedEntity {
 	public void update(final float delta) {
 		animation.get(currentAnimation).update(delta);
 		updateSprite(sprite);
-		
+
 	}
 
 	@Override
 	public void render(final Batch batch) {
 		sprite.draw(batch);
-
 	}
 
 	@Override
 	public BodyCreator prepareBody() {
-		BodyCreator bodyCreator = new BodyCreator();
-		bodyCreator.setPosition(new Vector2(Gdx.graphics.getWidth() / 2f,Gdx.graphics.getHeight() / 2f ));
-		FixtureDef fixtureDef = bodyCreator.createFixtureDef("body");
-		PolygonShape shape = new PolygonShape();
+		final BodyCreator bodyCreator = new BodyCreator();
+		bodyCreator.setPosition(new Vector2(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f));
+		final FixtureDef fixtureDef = bodyCreator.createFixtureDef("body");
+		final PolygonShape shape = new PolygonShape();
 		shape.setAsBox(10f / Game.PPM, 10f / Game.PPM);
 		fixtureDef.shape = shape;
 		return bodyCreator;
 	}
 
 	private void setAnimations() {
-		TextureAtlas atlas = AssetsManager.INSTANCE.getAsset(Asset.PLAYER, TextureAtlas.class);
-		animation.put(AnimationType.WALK,
-				new FrameContainer(WALKING_FRAMERATE, atlas.findRegions(WALK)));
-		animation.put(AnimationType.IDLE,
-				new FrameContainer(IDLE_FRAMERATE, atlas.findRegions(IDLE)));
-		animation.put(AnimationType.JUMP,
-				new FrameContainer(JUMP_FRAMERATE, atlas.findRegions(JUMP)));
+		final TextureAtlas atlas = AssetsManager.INSTANCE.getAsset(Asset.PLAYER, TextureAtlas.class);
+		animation.put(AnimationType.WALK, new FrameContainer(WALKING_FRAMERATE, atlas.findRegions(WALK)));
+		animation.put(AnimationType.IDLE, new FrameContainer(IDLE_FRAMERATE, atlas.findRegions(IDLE)));
+		animation.put(AnimationType.JUMP, new FrameContainer(JUMP_FRAMERATE, atlas.findRegions(JUMP)));
 
 		currentAnimation = AnimationType.IDLE;
 	}
-	
-	public void draw(SpriteBatch batch) {
+
+	public void draw(final SpriteBatch batch) {
 		sprite.draw(batch);
 	}
-	
-	public void handleInput(float delta) {
-//		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-//			currentAnimation = animation.get(WALK);
-//			body.applyLinearImpulse(new Vector2(-speed / Game.PPM, 0), body.getWorldCenter(), true);
-//			sprite.setScale(-1, 1);
-//		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-//			body.applyLinearImpulse(new Vector2(speed / Game.PPM, 0), body.getWorldCenter(), true);
-//			currentAnimation = animation.get(WALK);
-//			sprite.setScale(1, 1);
-//		} else {
-//			currentAnimation = animation.get(IDLE);
-//		}
-//		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && collidesWithGround()) {
-//
-//			body.applyForceToCenter(0f, 100f, true);
-//		}
-}
+
+	public void handleInput(final float delta) {
+		// if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+		// currentAnimation = animation.get(WALK);
+		// body.applyLinearImpulse(new Vector2(-speed / Game.PPM, 0), body.getWorldCenter(), true);
+		// sprite.setScale(-1, 1);
+		// } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+		// body.applyLinearImpulse(new Vector2(speed / Game.PPM, 0), body.getWorldCenter(), true);
+		// currentAnimation = animation.get(WALK);
+		// sprite.setScale(1, 1);
+		// } else {
+		// currentAnimation = animation.get(IDLE);
+		// }
+		// if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && collidesWithGround()) {
+		//
+		// body.applyForceToCenter(0f, 100f, true);
+		// }
+	}
 
 }
