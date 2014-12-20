@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 
 /** Launches desktop application.
  *
- * @author MJ */
+ * @author MTM */
 public class DesktopLauncher {
 	private static final String KONFIGURATS = "Konfigurats";
 	private final static int DEFAULT_WIDTH = 400, DEFAULT_HEIGHT = 600;

@@ -62,7 +62,7 @@ public class Game {
 	}
 
 	private void initiateB2D() {
-		world = new World(new Vector2(0f, -9.8f), true);
+		world = new World(new Vector2(0f, 1f), true);
 		debugRenderer = new Box2DDebugRenderer();
 		b2dCamera = new OrthographicCamera();
 		b2dCamera.setToOrtho(false, Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM);

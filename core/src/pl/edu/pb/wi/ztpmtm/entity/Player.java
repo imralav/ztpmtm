@@ -11,11 +11,13 @@ import pl.edu.pb.wi.ztpmtm.gui.assets.Asset;
 import pl.edu.pb.wi.ztpmtm.managers.gui.AssetsManager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -30,7 +32,6 @@ public class Player extends AnimatedEntity {
 	private static final String JUMP = "jump";
 
 	private Sprite sprite;
-	private float elapsedTime = 0;
 	private float speed = 10;
 	private AnimationType currentAnimation;
 	private Map<AnimationType, FrameContainer> animation;
@@ -46,6 +47,7 @@ public class Player extends AnimatedEntity {
 	public void update(final float delta) {
 		animation.get(currentAnimation).update(delta);
 		updateSprite(sprite);
+		handleInput(delta);	
 		
 	}
 
@@ -59,6 +61,7 @@ public class Player extends AnimatedEntity {
 	public BodyCreator prepareBody() {
 		BodyCreator bodyCreator = new BodyCreator();
 		bodyCreator.setPosition(new Vector2(Gdx.graphics.getWidth() / 2f,Gdx.graphics.getHeight() / 2f ));
+		bodyCreator.setType(BodyType.DynamicBody);
 		FixtureDef fixtureDef = bodyCreator.createFixtureDef("body");
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(10f / Game.PPM, 10f / Game.PPM);
@@ -83,21 +86,21 @@ public class Player extends AnimatedEntity {
 	}
 	
 	public void handleInput(float delta) {
-//		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-//			currentAnimation = animation.get(WALK);
-//			body.applyLinearImpulse(new Vector2(-speed / Game.PPM, 0), body.getWorldCenter(), true);
-//			sprite.setScale(-1, 1);
-//		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-//			body.applyLinearImpulse(new Vector2(speed / Game.PPM, 0), body.getWorldCenter(), true);
-//			currentAnimation = animation.get(WALK);
-//			sprite.setScale(1, 1);
-//		} else {
-//			currentAnimation = animation.get(IDLE);
-//		}
-//		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && collidesWithGround()) {
-//
-//			body.applyForceToCenter(0f, 100f, true);
-//		}
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			currentAnimation = AnimationType.WALK;
+			body.applyLinearImpulse(new Vector2(-speed / Game.PPM, 0), body.getWorldCenter(), true);
+			sprite.setScale(-1, 1);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			body.applyLinearImpulse(new Vector2(speed / Game.PPM, 0), body.getWorldCenter(), true);
+			currentAnimation = AnimationType.WALK;
+			sprite.setScale(1, 1);
+		} else {
+			currentAnimation = AnimationType.JUMP;
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+
+			body.applyForceToCenter(0f, 100f, true);
+		}
 }
 
 }

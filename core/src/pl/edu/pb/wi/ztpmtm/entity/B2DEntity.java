@@ -39,7 +39,7 @@ public abstract class B2DEntity implements Entity {
 	}
 
 	public void updateSprite(final Sprite sprite) {
-		// ustawia właściwości sprite na podstawie body
+		sprite.setPosition(body.getPosition().x*Game.PPM, body.getPosition().y*Game.PPM);
 	}
 
 	public void dispose(final World world) {
