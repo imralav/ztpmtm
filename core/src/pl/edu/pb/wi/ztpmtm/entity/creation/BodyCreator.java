@@ -33,7 +33,6 @@ public class BodyCreator {
 
 	public void setPosition(final Vector2 position) {
 		bodyDef.position.set(position);
-		
 	}
 
 	public void setType(final BodyType bodyType) {

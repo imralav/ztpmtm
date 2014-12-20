@@ -98,6 +98,6 @@ public class Player extends AnimatedEntity {
 //
 //			body.applyForceToCenter(0f, 100f, true);
 //		}
-	}
+}
 
 }

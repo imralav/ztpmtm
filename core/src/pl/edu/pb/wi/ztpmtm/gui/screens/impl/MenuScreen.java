@@ -57,7 +57,7 @@ public class MenuScreen extends AbstractApplicationScreen {
 
 	@Override
 	protected void createWidgets() {
-		final TableBuilder tableBuilder = new StandardTableBuilder(Padding.PAD_4);
+		final TableBuilder tableBuilder = new OneColumnTableBuilder(Padding.PAD_4);
 
 		tableBuilder.append(InterfaceUtilities.createGameTitle());
 		tableBuilder.append(createStartButton(), true, false);

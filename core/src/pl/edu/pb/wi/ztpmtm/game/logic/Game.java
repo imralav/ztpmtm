@@ -24,7 +24,6 @@ public class Game {
 	private static final float STEP_DURATION = 1f / UPDATES_IN_SECOND;
 	private static final String SEPARATOR = ":";
 	private static final int FIRST_DOUBLE_DIGIT_NUMBER = 10;
-	
 
 	private static Game CURRENT_GAME;
 
@@ -40,7 +39,6 @@ public class Game {
 	private ViewData viewData;
 	
 	private Player player;
-	
 	public ViewData getViewData() {
 		return viewData;
 	}
