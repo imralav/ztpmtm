@@ -4,9 +4,9 @@ import pl.edu.pb.wi.ztpmtm.entity.Player;
 import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
@@ -52,11 +52,11 @@ public enum InteractionStrategy {
 	},
 	GRASS,
 	STONE {
-		@Override
-		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
-			super.setBodyData(bodyCreator, initialY);
-			bodyCreator.setType(BodyType.DynamicBody);
-		}
+		// @Override
+		// public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+		// super.setBodyData(bodyCreator, initialY);
+		// bodyCreator.setType(BodyType.DynamicBody);
+		// }
 
 		@Override
 		public void beginCollision(final Player player) {
@@ -100,22 +100,27 @@ public enum InteractionStrategy {
 	}
 
 	public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
-		final float x = 0; // TODO: losuj ixa
+		final float currentPlatformWidth = DEFAULT_WIDTH;
+		final float x =
+				MathUtils.random(currentPlatformWidth / 2f, Gdx.graphics.getWidth() / Game.PPM
+						- currentPlatformWidth / 2f); // TODO: losuj ixa
 		bodyCreator.setPosition(new Vector2(x, initialY));
 		bodyCreator.setFixedRotation(true);
 		bodyCreator.getBodyDef().gravityScale = 0f;
 		final FixtureDef fixtureDef = bodyCreator.createFixtureDef(PLATFORM_FIXTURE_NAME);
 		prepareDefaultFixture(fixtureDef);
-		final PolygonShape shape = new PolygonShape();
+		final PolygonShape platformShape = new PolygonShape();
 		// TODO: set shape according to current points instead of default
-		shape.setAsBox(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		fixtureDef.shape = shape;
+		platformShape.setAsBox(currentPlatformWidth, DEFAULT_HEIGHT / 2f);
+		fixtureDef.shape = platformShape;
 
 		final FixtureDef topSensor = bodyCreator.createFixtureDef(SENSOR_FIXTURE_NAME);
 		topSensor.isSensor = true;
+		final PolygonShape sensorShape = new PolygonShape();
 		// TODO: set sensor shape
-		shape.setAsBox(DEFAULT_WIDTH / 2f, SENSOR_DEFAULT_HEIGHT / 2f, new Vector2(0, DEFAULT_HEIGHT), 0);
-		topSensor.shape = shape;
+		sensorShape.setAsBox(currentPlatformWidth, SENSOR_DEFAULT_HEIGHT / 2f, new Vector2(0,
+				DEFAULT_HEIGHT / 2f), 0);
+		topSensor.shape = sensorShape;
 	}
 
 }
