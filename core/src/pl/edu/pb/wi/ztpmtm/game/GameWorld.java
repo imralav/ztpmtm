@@ -10,10 +10,15 @@ import pl.edu.pb.wi.ztpmtm.managers.gui.AssetsManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
@@ -30,21 +35,37 @@ public class GameWorld {
 
 	private Player player;
 
+	private Body screenBottomSensor;
+
 	public GameWorld() {
 		initiateB2D();
 	}
 
 	private void initiateB2D() {
 		world = new World(new Vector2(0f, -9.8f), true);
-		setupContactListener();
 		prepareWorld();
 		player = new Player(world);
+		setupContactListener();
 	}
 
 	private void prepareWorld() {
 		platforms = new Array<B2DEntity>();
 		platformsToDispose = new Array<B2DEntity>();
 		createPlatforms();
+		createWorldBoundSensors();
+	}
+
+	private void createWorldBoundSensors() {
+		final BodyDef bodyDef = new BodyDef();
+		bodyDef.type = BodyType.StaticBody;
+		bodyDef.position.set(new Vector2(Game.getCurrentGame().getViewData().getWidth() / 2f, 0));
+		final FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.isSensor = true;
+		final PolygonShape shape = new PolygonShape();
+		shape.setAsBox(Game.getCurrentGame().getViewData().getWidth() / 2f, 1f / Game.PPM);
+		fixtureDef.shape = shape;
+		screenBottomSensor = world.createBody(bodyDef);
+		screenBottomSensor.createFixture(fixtureDef);
 	}
 
 	private void createPlatforms() {
@@ -59,8 +80,8 @@ public class GameWorld {
 		final Platform platform = new Platform(platformY);
 		platform.createBody(world);
 		platform.setRegion(platformAtlas.findRegion(platform.getInteractionStrategy().getTextureName()));
-		platforms.add(platform);
 		platform.initialPush(-1f);
+		platforms.add(platform);
 	}
 
 	public void update(final float delta) {
