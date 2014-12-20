@@ -1,18 +1,25 @@
 package pl.edu.pb.wi.ztpmtm.animation;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.utils.Array;
 
 public class FrameContainer {
-	private float frameDuration;
-	private AtlasRegion[] regions;
-	private AnimationType defaultAnimationType;
+	private float frameDuration, elapsedTime = 0;
+	private Array<AtlasRegion> regions;
 	private int currentFrame = 0;
 
-	public FrameContainer(final float frameDuration, final AtlasRegion[] regions,
-			final AnimationType defaultAnimationType) {
+	public FrameContainer(final float frameDuration,
+			final Array<AtlasRegion> array) {
 		this.frameDuration = frameDuration;
-		this.regions = regions;
-		this.defaultAnimationType = defaultAnimationType;
+		this.regions = array;
+	}
+	
+	public void update(final float delta) {
+		elapsedTime += delta;
+		while (elapsedTime >= frameDuration) {
+			elapsedTime -= frameDuration;
+			incrementCurrentFrame();
+		}
 	}
 
 	public void incrementCurrentFrame() {
@@ -20,11 +27,11 @@ public class FrameContainer {
 	}
 
 	public AtlasRegion getCurrentRegion() {
-		return regions[currentFrame];
+		return regions.get(currentFrame);
 	}
 
 	public int getRegionsAmount() {
-		return regions.length;
+		return regions.size;
 	}
 
 	/**
@@ -35,7 +42,8 @@ public class FrameContainer {
 	}
 
 	/**
-	 * @param frameDuration the frameDuration to set
+	 * @param frameDuration
+	 *            the frameDuration to set
 	 */
 	public void setFrameDuration(final float frameDuration) {
 		this.frameDuration = frameDuration;
@@ -44,29 +52,16 @@ public class FrameContainer {
 	/**
 	 * @return the regions
 	 */
-	public AtlasRegion[] getRegions() {
+	public Array<AtlasRegion> getRegions() {
 		return regions;
 	}
 
 	/**
-	 * @param regions the regions to set
+	 * @param regions
+	 *            the regions to set
 	 */
-	public void setRegions(final AtlasRegion[] regions) {
+	public void setRegions(final Array<AtlasRegion> regions) {
 		this.regions = regions;
-	}
-
-	/**
-	 * @return the defaultAnimationType
-	 */
-	public AnimationType getDefaultAnimationType() {
-		return defaultAnimationType;
-	}
-
-	/**
-	 * @param defaultAnimationType the defaultAnimationType to set
-	 */
-	public void setDefaultAnimationType(final AnimationType defaultAnimationType) {
-		this.defaultAnimationType = defaultAnimationType;
 	}
 
 	/**
@@ -77,7 +72,8 @@ public class FrameContainer {
 	}
 
 	/**
-	 * @param currentFrame the currentFrame to set
+	 * @param currentFrame
+	 *            the currentFrame to set
 	 */
 	public void setCurrentFrame(final int currentFrame) {
 		this.currentFrame = currentFrame;

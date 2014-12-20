@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import pl.edu.pb.wi.ztpmtm.entity.B2DEntity;
 import pl.edu.pb.wi.ztpmtm.entity.Platform;
+import pl.edu.pb.wi.ztpmtm.entity.Player;
 import pl.edu.pb.wi.ztpmtm.game.GameDifficulty;
 import pl.edu.pb.wi.ztpmtm.game.logic.view.ViewData;
 
@@ -53,6 +54,8 @@ public class Game {
 	private Array<B2DEntity> platforms;
 	private Array<B2DEntity> platformsToDispose;
 	private int amountOfPlatformsToCreate = 0;
+
+	private final Player player;
 
 	public ViewData getViewData() {
 		return viewData;
@@ -148,8 +151,9 @@ public class Game {
 	private Game(final GameDifficulty gameDifficulty) {
 		totalTime = Calendar.getInstance();
 		totalTime.set(0, 0, 0, 0, 0, 0);
-		// TODO create Box2D world, apply difficulty effect
 		initiateB2D();
+		player = new Player(world);
+
 	}
 
 	public static void prepareGame(final GameDifficulty gameDifficulty) {
@@ -193,6 +197,7 @@ public class Game {
 			addNewPlatforms();
 			removePlatforms();
 			updatePlatformsSpeed(-(2f * (float) Math.sqrt(timeElapsed) + INITIAL_FALLING_SPEED) / PPM);
+			player.update(delta);
 		}
 	}
 
@@ -205,7 +210,7 @@ public class Game {
 
 	private void addNewPlatforms() {
 		for (int i = 0; i < amountOfPlatformsToCreate; i++) {
-			addPlatform(viewData.getHeight() + PLATFORM_OFFSET);
+			addPlatform(viewData.getHeight() + PLATFORM_DISTANCE);
 		}
 		amountOfPlatformsToCreate = 0;
 	}
@@ -220,7 +225,9 @@ public class Game {
 	public void render(final Batch batch) {
 		// TODO render background, then sprites
 		debugRenderer.render(world, b2dCamera.combined);
+		batch.begin();
 		renderPlatforms(batch);
+		batch.end();
 	}
 
 	private void updatePlatformsSpeed(final float yVelocity) {
@@ -233,5 +240,6 @@ public class Game {
 		for (final B2DEntity entity : platforms) {
 			entity.render(batch);
 		}
+		player.render(batch);
 	}
 }

@@ -8,6 +8,7 @@ import pl.edu.pb.wi.ztpmtm.gui.utilities.InterfaceUtilities;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.Padding;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.TableBuilder;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.builders.OneColumnTableBuilder;
+import pl.edu.pb.wi.ztpmtm.gui.utilities.builders.StandardTableBuilder;
 import pl.edu.pb.wi.ztpmtm.gui.utilities.factory.WidgetFactory;
 import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.LabelStyle;
 import pl.edu.pb.wi.ztpmtm.gui.widgets.styles.ListStyle;
