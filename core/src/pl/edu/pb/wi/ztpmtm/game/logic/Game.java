@@ -52,7 +52,7 @@ public class Game {
 	}
 
 	public float getCurrentPlatformWidth() {
-		float currentWidth = MAX_PLATFORM_WIDTH - pointsAmount;
+		float currentWidth = MAX_PLATFORM_WIDTH;
 		currentWidth = currentWidth < MIN_PLATFORM_WIDTH ? MIN_PLATFORM_WIDTH : currentWidth;
 		return currentWidth;
 	}

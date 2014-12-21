@@ -1,5 +1,6 @@
 package pl.edu.pb.wi.ztpmtm.entity;
 
+import pl.edu.pb.wi.ztpmtm.entity.UserData.EntityType;
 import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 import pl.edu.pb.wi.ztpmtm.entity.decorators.helpers.DrawData;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
@@ -11,9 +12,13 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class B2DEntity implements Entity {
 	protected Body body;
+	private EntityType entityType;
 
 	public void createBody(final World world) {
 		body = prepareBody().createBody(world);
+		// for (final Fixture fixture : body.getFixtureList()) {
+		// fixture.setUserData(this);
+		// }
 	}
 
 	public void applyUserDataToAllFixtures(final UserData userData) {
@@ -23,22 +28,6 @@ public abstract class B2DEntity implements Entity {
 	}
 
 	public abstract BodyCreator prepareBody();
-
-	public float getScreenX() {
-		return body.getPosition().x * Game.PPM;
-	}
-
-	public float getScreenY() {
-		return body.getPosition().y * Game.PPM;
-	}
-
-	public float getWorldX() {
-		return body.getPosition().x;
-	}
-
-	public float getWorldY() {
-		return body.getPosition().y;
-	}
 
 	public void updateSprite(final Sprite sprite) {
 		sprite.setPosition(body.getPosition().x * Game.PPM - sprite.getWidth() / 2f, body.getPosition().y
@@ -59,6 +48,20 @@ public abstract class B2DEntity implements Entity {
 	 */
 	public Body getBody() {
 		return body;
+	}
+
+	/**
+	 * @return the entityType
+	 */
+	public EntityType getEntityType() {
+		return entityType;
+	}
+
+	/**
+	 * @param entityType the entityType to set
+	 */
+	public void setEntityType(final EntityType entityType) {
+		this.entityType = entityType;
 	}
 
 }

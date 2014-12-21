@@ -12,6 +12,7 @@ public class BodyCreator {
 	private static final BodyType DEFAULT_BODY_TYPE = BodyType.KinematicBody;
 	private final BodyDef bodyDef;
 	private final ObjectMap<String, FixtureDef> fixtureDefs;
+	private float drawingWidth;
 
 	public BodyCreator() {
 		this(DEFAULT_BODY_TYPE);
@@ -55,5 +56,13 @@ public class BodyCreator {
 
 	public FixtureDef getFixtureDefForName(final String name) {
 		return fixtureDefs.get(name);
+	}
+
+	public float getDrawingWidth() {
+		return drawingWidth;
+	}
+
+	public void setDrawingWidth(final float drawingWidth) {
+		this.drawingWidth = drawingWidth;
 	}
 }

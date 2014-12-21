@@ -3,7 +3,7 @@ package pl.edu.pb.wi.ztpmtm.entity;
 import pl.edu.pb.wi.ztpmtm.entity.UserData.EntityType;
 import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
-import pl.edu.pb.wi.ztpmtm.game.logic.collisions.Bits;
+import pl.edu.pb.wi.ztpmtm.game.logic.collisions.CollisionFilter;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
@@ -21,58 +21,108 @@ public class WorldBound extends B2DEntity {
 
 	public WorldBound(final WorldBoundType worldBoundType) {
 		this.worldBoundType = worldBoundType;
-		worldBoundUserData = new UserData(EntityType.WORLD_BOUND, this);
+		worldBoundUserData = new UserData(worldBoundType.getEntityType(), this);
 	}
 
 	public enum WorldBoundType {
-		LEFT {
+		LEFT(EntityType.WORLD_BOUND) {
 			@Override
-			public void setPosition(final BodyDef bodyDef) {
+			public void setBodyDef(final BodyDef bodyDef) {
 				bodyDef.position.set(0, Game.getCurrentGame().getViewData().getHeight() / 2f);
+				bodyDef.type = BodyType.StaticBody;
 			}
 
 			@Override
 			public Shape getShape() {
 				final EdgeShape sensorShape = new EdgeShape();
-				sensorShape.set(new Vector2(0f, 0f), new Vector2(0, Game.getCurrentGame().getViewData()
-						.getHeight()));
+				sensorShape.set(new Vector2(0f, -Game.getCurrentGame().getViewData().getHeight() / 2f),
+						new Vector2(0, Game.getCurrentGame().getViewData().getHeight() / 2f));
 				return sensorShape;
 			}
-		},
-		RIGHT {
+
 			@Override
-			public void setPosition(final BodyDef bodyDef) {
+			public void setFixtureDef(final FixtureDef fixtureDef) {
+				fixtureDef.isSensor = false;
+			}
+		},
+		RIGHT(EntityType.WORLD_BOUND) {
+			@Override
+			public void setBodyDef(final BodyDef bodyDef) {
 				bodyDef.position.set(Game.getCurrentGame().getViewData().getWidth(), Game.getCurrentGame()
 						.getViewData().getHeight() / 2f);
+				bodyDef.type = BodyType.StaticBody;
 			}
 
 			@Override
 			public Shape getShape() {
 				final EdgeShape sensorShape = new EdgeShape();
-				sensorShape.set(new Vector2(Game.getCurrentGame().getViewData().getWidth(), 0), new Vector2(
-						new Vector2(Game.getCurrentGame().getViewData().getWidth(), Game.getCurrentGame()
-								.getViewData().getHeight())));
+				sensorShape.set(new Vector2(0, -Game.getCurrentGame().getViewData().getHeight() / 2f),
+						new Vector2(new Vector2(0, Game.getCurrentGame().getViewData().getHeight() / 2f)));
 				return sensorShape;
 			}
-		},
-		BOTTOM {
+
 			@Override
-			public void setPosition(final BodyDef bodyDef) {
+			public void setFixtureDef(final FixtureDef fixtureDef) {
+				fixtureDef.isSensor = false;
+			}
+		},
+		TOP(EntityType.WORLD_BOUND) {
+			@Override
+			public void setBodyDef(final BodyDef bodyDef) {
+				bodyDef.position.set(Game.getCurrentGame().getViewData().getWidth() / 2f, Game
+						.getCurrentGame().getViewData().getHeight());
+			}
+
+			@Override
+			public Shape getShape() {
+				final EdgeShape sensorShape = new EdgeShape();
+				sensorShape.set(new Vector2(-Game.getCurrentGame().getViewData().getWidth() / 2f, 0),
+						new Vector2(Game.getCurrentGame().getViewData().getWidth() / 2f, 0));
+				return sensorShape;
+			}
+
+			@Override
+			public void setFixtureDef(final FixtureDef fixtureDef) {
+				fixtureDef.isSensor = false;
+			}
+		},
+		BOTTOM(EntityType.WORLD_BOUND) {
+			@Override
+			public void setBodyDef(final BodyDef bodyDef) {
 				bodyDef.position.set(Game.getCurrentGame().getViewData().getWidth() / 2f, 0);
 			}
 
 			@Override
 			public Shape getShape() {
 				final EdgeShape sensorShape = new EdgeShape();
-				sensorShape.set(new Vector2(0, 0), new Vector2(
-						Game.getCurrentGame().getViewData().getWidth(), 0));
+				sensorShape.set(new Vector2(-Game.getCurrentGame().getViewData().getWidth() / 2f, 0),
+						new Vector2(Game.getCurrentGame().getViewData().getWidth() / 2f, 0));
 				return sensorShape;
 			}
-		};
 
-		public abstract void setPosition(BodyDef bodyDef);
+			@Override
+			public void setFixtureDef(final FixtureDef fixtureDef) {
+				fixtureDef.isSensor = false;
+			}
+		};
+		private EntityType entityType;
+
+		private WorldBoundType(final EntityType entityType) {
+			this.entityType = entityType;
+		}
+
+		public abstract void setBodyDef(BodyDef bodyDef);
+
+		public abstract void setFixtureDef(FixtureDef fixtureDef);
 
 		public abstract Shape getShape();
+
+		/**
+		 * @return the entityType
+		 */
+		public EntityType getEntityType() {
+			return entityType;
+		}
 	}
 
 	@Override
@@ -88,12 +138,12 @@ public class WorldBound extends B2DEntity {
 	@Override
 	public BodyCreator prepareBody() {
 		final BodyCreator bodyCreator = new BodyCreator(BodyType.StaticBody);
-		worldBoundType.setPosition(bodyCreator.getBodyDef());
-		final FixtureDef sensorFixture = bodyCreator.createFixtureDef(SENSOR_FIXTURENAME);
-		sensorFixture.isSensor = true;
-		sensorFixture.shape = worldBoundType.getShape();
-		sensorFixture.filter.categoryBits = Bits.WORLD_BOUND_CATEGORY_BIT;
-		sensorFixture.filter.maskBits = Bits.WORLD_BOUND_MASK_BITS;
+		worldBoundType.setBodyDef(bodyCreator.getBodyDef());
+		final FixtureDef worldBoundFixture = bodyCreator.createFixtureDef(SENSOR_FIXTURENAME);
+		worldBoundFixture.shape = worldBoundType.getShape();
+		worldBoundFixture.filter.categoryBits = CollisionFilter.WORLD_BOUND.getFilter().categoryBits;
+		worldBoundFixture.filter.maskBits = CollisionFilter.WORLD_BOUND.getFilter().maskBits;
+		worldBoundType.setFixtureDef(worldBoundFixture);
 		return bodyCreator;
 	}
 

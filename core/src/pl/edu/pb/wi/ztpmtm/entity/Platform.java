@@ -17,6 +17,7 @@ public class Platform extends B2DEntity {
 	private final TiledDrawable sprite;
 	private final DrawData drawData;
 	private final UserData platformUserData;
+	private float currentPlatformWidth;
 
 	public Platform() {
 		this(Game.getCurrentGame().getViewData().getSpawnHeight());
@@ -36,7 +37,6 @@ public class Platform extends B2DEntity {
 
 	@Override
 	public void render(final Batch batch) {
-		final float currentPlatformWidth = Game.getCurrentGame().getCurrentPlatformWidth();
 		sprite.draw(batch, drawData.x - currentPlatformWidth / 2f, drawData.y
 				- sprite.getRegion().getRegionHeight() / 2f, currentPlatformWidth, sprite.getRegion()
 				.getRegionHeight());
@@ -57,6 +57,7 @@ public class Platform extends B2DEntity {
 		interactionStrategy = InteractionStrategy.getRandomInteraction();
 		final BodyCreator bodyCreator = new BodyCreator();
 		interactionStrategy.setBodyData(bodyCreator, initialY);
+		currentPlatformWidth = bodyCreator.getDrawingWidth();
 		return bodyCreator;
 	}
 

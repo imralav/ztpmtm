@@ -34,9 +34,9 @@ public class GameWorld {
 	private boolean shouldCreatePlatform = false;
 	private boolean shouldUpdatePlatformForce = false;
 	private TextureAtlas platformAtlas;
-	private static final float INITIAL_PLATFORM_FORCE = -1f;
+	private static final float INITIAL_PLATFORM_FORCE = -10f;
 	private static final float PLATFORM_FORCE_CHANGE_INTERVAL = 1f / 2f;
-	private float platformForce = INITIAL_PLATFORM_FORCE;
+	private final float platformForce = INITIAL_PLATFORM_FORCE;
 
 	private Player player;
 
@@ -67,11 +67,10 @@ public class GameWorld {
 
 	private void createWorldBounds() {
 		worldBounds = new Array<B2DEntity>();
-		worldBounds.add(new WorldBound(WorldBoundType.LEFT));
-		worldBounds.add(new WorldBound(WorldBoundType.RIGHT));
-		worldBounds.add(new WorldBound(WorldBoundType.BOTTOM));
-		for (final B2DEntity entity : worldBounds) {
-			entity.createBody(world);
+		for (final WorldBoundType worldBoundType : WorldBoundType.values()) {
+			final WorldBound worldBound = new WorldBound(worldBoundType);
+			worldBound.createBody(world);
+			worldBounds.add(worldBound);
 		}
 	}
 
@@ -97,11 +96,11 @@ public class GameWorld {
 	public void update(final float delta) {
 		platformForceChangeTime += delta;
 		elapsedTime += delta;
-		if (platformForceChangeTime >= PLATFORM_FORCE_CHANGE_INTERVAL) {
-			platformForceChangeTime %= PLATFORM_FORCE_CHANGE_INTERVAL;
-			platformForce = INITIAL_PLATFORM_FORCE - (float) Math.sqrt(elapsedTime / 1000f);
-			shouldUpdatePlatformForce = true;
-		}
+		// if (platformForceChangeTime >= PLATFORM_FORCE_CHANGE_INTERVAL) {
+		// platformForceChangeTime %= PLATFORM_FORCE_CHANGE_INTERVAL;
+		// platformForce = INITIAL_PLATFORM_FORCE - (float) Math.sqrt(elapsedTime / 1000f);
+		// shouldUpdatePlatformForce = true;
+		// }
 		world.step(Game.STEP_DURATION, 6, 2);
 		addNewPlatforms();
 		removePlatforms();
@@ -123,21 +122,34 @@ public class GameWorld {
 			if (shouldUpdatePlatformForce) {
 				platform.updateFallingSpeed(platformForce);
 			}
-			// is platform below the player?
-			if (platform.getDrawData().y + platform.getSprite().getRegion().getRegionHeight() < player
-					.getSprite().getY()) {
-				// apply new filter to all platform fixtures
-				for (final Fixture fixture : platform.getBody().getFixtureList()) {
-					fixture.setFilterData(CollisionFilter.PLATFORM_BELOW_PLAYER.getFilter());
-				}
-			} else {
-				// apply new filter to all platform fixtures
-				for (final Fixture fixture : platform.getBody().getFixtureList()) {
-					fixture.setFilterData(CollisionFilter.PLATFORM_ABOVE_PLAYER.getFilter());
-				}
-			}
+			updatePlatformCollisionFilter(platform);
+			checkPlatformOutOfBounds(platform);
 		}
 		shouldUpdatePlatformForce = false;
+	}
+
+	private void checkPlatformOutOfBounds(final Platform platform) {
+		if (platform.getDrawData().y - platform.getSprite().getRegion().getRegionHeight() / 2f < 0f) {
+			shouldCreatePlatform = true;
+			platformsToDispose.add(platform);
+			platforms.removeValue(platform, true);
+		}
+	}
+
+	private void updatePlatformCollisionFilter(final Platform platform) {
+		// is platform below the player?
+		if (platform.getDrawData().y + platform.getSprite().getRegion().getRegionHeight() / 2 < player
+				.getSprite().getY()) {
+			// apply new filter to all platform fixtures
+			for (final Fixture fixture : platform.getBody().getFixtureList()) {
+				fixture.setFilterData(CollisionFilter.PLATFORM_BELOW_PLAYER.getFilter());
+			}
+		} else {
+			// apply new filter to all platform fixtures
+			for (final Fixture fixture : platform.getBody().getFixtureList()) {
+				fixture.setFilterData(CollisionFilter.PLATFORM_ABOVE_PLAYER.getFilter());
+			}
+		}
 	}
 
 	private void removePlatforms() {
@@ -174,25 +186,6 @@ public class GameWorld {
 
 			@Override
 			public void beginContact(final Contact contact) {
-				// Platform platform;
-				// if (contact.getFixtureA().getUserData() instanceof Platform) {
-				// platform = (Platform) contact.getFixtureA().getUserData();
-				// if (contact.getFixtureB().getUserData() == null) {
-				// platformsToDispose.add(platform);
-				// platforms.removeValue(platform, true);
-				// shouldCreatePlatform = true;
-				// }
-				// Gdx.app.log("Debug", "Platform touching");
-				// }
-				// if (contact.getFixtureB().getUserData() instanceof Platform) {
-				// platform = (Platform) contact.getFixtureB().getUserData();
-				// if (contact.getFixtureA().getUserData() == null) {
-				// platformsToDispose.add(platform);
-				// platforms.removeValue(platform, true);
-				// shouldCreatePlatform = true;
-				// }
-				// Gdx.app.log("Debug", "Platform touching");
-				// }
 				final UserData userDataA = (UserData) contact.getFixtureA().getUserData();
 				final UserData userDataB = (UserData) contact.getFixtureB().getUserData();
 				userDataA.beginContact(userDataB);

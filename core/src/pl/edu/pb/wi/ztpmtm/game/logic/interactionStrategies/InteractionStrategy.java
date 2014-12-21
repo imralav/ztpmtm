@@ -8,6 +8,7 @@ import pl.edu.pb.wi.ztpmtm.game.logic.collisions.Bits;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
@@ -53,11 +54,11 @@ public enum InteractionStrategy {
 	// },
 	GRASS("grass"),
 	STONE("stone") {
-		// @Override
-		// public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
-		// super.setBodyData(bodyCreator, initialY);
-		// bodyCreator.setType(BodyType.DynamicBody);
-		// }
+		@Override
+		public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
+			super.setBodyData(bodyCreator, initialY);
+			bodyCreator.setType(BodyType.DynamicBody);
+		}
 
 		@Override
 		public void beginCollision(final Player player) {
@@ -79,7 +80,6 @@ public enum InteractionStrategy {
 	private static final String PLATFORM_FIXTURE_NAME = "platform";
 	private static final String SENSOR_FIXTURE_NAME = "sensor";
 	private static final float DEFAULT_HEIGHT = 35f / Game.PPM;
-	private static final float DEFAULT_WIDTH = 50f / Game.PPM;
 	private static final float SENSOR_DEFAULT_HEIGHT = 5f / Game.PPM;
 	private String textureName;
 
@@ -106,7 +106,9 @@ public enum InteractionStrategy {
 	}
 
 	public void setBodyData(final BodyCreator bodyCreator, final float initialY) {
-		final float currentPlatformWidth = Game.getCurrentGame().getCurrentPlatformWidth() / Game.PPM;
+		final float currentPlatformWidthInPixels = Game.getCurrentGame().getCurrentPlatformWidth();
+		final float currentPlatformWidth = currentPlatformWidthInPixels / Game.PPM;
+		bodyCreator.setDrawingWidth(currentPlatformWidthInPixels);
 		final float x =
 				MathUtils.random(currentPlatformWidth / 2f, Gdx.graphics.getWidth() / Game.PPM
 						- currentPlatformWidth / 2f);
@@ -118,6 +120,7 @@ public enum InteractionStrategy {
 		final PolygonShape platformShape = new PolygonShape();
 		platformShape.setAsBox(currentPlatformWidth / 2f, DEFAULT_HEIGHT / 2f);
 		fixtureDef.shape = platformShape;
+		fixtureDef.isSensor = false;
 
 		final FixtureDef topSensor = bodyCreator.createFixtureDef(SENSOR_FIXTURE_NAME);
 		topSensor.isSensor = true;
