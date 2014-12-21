@@ -1,5 +1,6 @@
 package pl.edu.pb.wi.ztpmtm.entity;
 
+import pl.edu.pb.wi.ztpmtm.entity.UserData.EntityType;
 import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 import pl.edu.pb.wi.ztpmtm.entity.decorators.helpers.DrawData;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
@@ -7,6 +8,7 @@ import pl.edu.pb.wi.ztpmtm.game.logic.interactionStrategies.InteractionStrategy;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 
 public class Platform extends B2DEntity {
@@ -14,6 +16,7 @@ public class Platform extends B2DEntity {
 	private final float initialY;
 	private final TiledDrawable sprite;
 	private final DrawData drawData;
+	private final UserData platformUserData;
 
 	public Platform() {
 		this(Game.getCurrentGame().getViewData().getSpawnHeight());
@@ -23,6 +26,7 @@ public class Platform extends B2DEntity {
 		this.initialY = initialY;
 		drawData = new DrawData();
 		sprite = new TiledDrawable();
+		platformUserData = new UserData(EntityType.PLATFORM, this);
 	}
 
 	@Override
@@ -54,6 +58,16 @@ public class Platform extends B2DEntity {
 		final BodyCreator bodyCreator = new BodyCreator();
 		interactionStrategy.setBodyData(bodyCreator, initialY);
 		return bodyCreator;
+	}
+
+	/**
+	 * Besides creating body using {@link B2DEntity#createBody(World)} this method sets
+	 * all of body's fixtures user data to the one created in {@link Platform#Platform(float)}
+	 */
+	@Override
+	public void createBody(final World world) {
+		super.createBody(world);
+		applyUserDataToAllFixtures(platformUserData);
 	}
 
 	public void setRegion(final AtlasRegion region) {

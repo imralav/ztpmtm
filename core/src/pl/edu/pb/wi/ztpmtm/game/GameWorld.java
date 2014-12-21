@@ -3,25 +3,21 @@ package pl.edu.pb.wi.ztpmtm.game;
 import pl.edu.pb.wi.ztpmtm.entity.B2DEntity;
 import pl.edu.pb.wi.ztpmtm.entity.Platform;
 import pl.edu.pb.wi.ztpmtm.entity.Player;
+import pl.edu.pb.wi.ztpmtm.entity.UserData;
+import pl.edu.pb.wi.ztpmtm.entity.WorldBound;
+import pl.edu.pb.wi.ztpmtm.entity.WorldBound.WorldBoundType;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
-import pl.edu.pb.wi.ztpmtm.game.logic.collisions.Bits;
 import pl.edu.pb.wi.ztpmtm.game.logic.collisions.CollisionFilter;
 import pl.edu.pb.wi.ztpmtm.gui.assets.Asset;
 import pl.edu.pb.wi.ztpmtm.managers.gui.AssetsManager;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
@@ -44,7 +40,8 @@ public class GameWorld {
 
 	private Player player;
 
-	private Body screenBottomSensor;
+	private Array<B2DEntity> worldBounds;
+
 	private double elapsedTime = 0;
 
 	public GameWorld() {
@@ -54,33 +51,33 @@ public class GameWorld {
 	private void initiateB2D() {
 		world = new World(new Vector2(0f, -9.8f), true);
 		prepareWorld();
-		player = new Player(world);
+		createPlayer();
 		setupContactListener();
 	}
 
-	private void prepareWorld() {
-		platforms = new Array<B2DEntity>();
-		platformsToDispose = new Array<B2DEntity>();
-		createPlatforms();
-		createWorldBoundSensors();
+	private void createPlayer() {
+		player = new Player(world);
+		player.createBody(world);
 	}
 
-	private void createWorldBoundSensors() {
-		final BodyDef bodyDef = new BodyDef();
-		bodyDef.type = BodyType.StaticBody;
-		bodyDef.position.set(new Vector2(Game.getCurrentGame().getViewData().getWidth() / 2f, 0));
-		final FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.isSensor = true;
-		final PolygonShape shape = new PolygonShape();
-		shape.setAsBox(Game.getCurrentGame().getViewData().getWidth() / 2f, 1f / Game.PPM);
-		fixtureDef.shape = shape;
-		fixtureDef.filter.categoryBits = Bits.WORLD_BOUND_SENSOR_CATEGORY_BIT;
-		fixtureDef.filter.maskBits = Bits.PLATFORM_CATEGORY_BIT | Bits.PLAYER_CATEGORY_BIT;
-		screenBottomSensor = world.createBody(bodyDef);
-		screenBottomSensor.createFixture(fixtureDef);
+	private void prepareWorld() {
+		createPlatforms();
+		createWorldBounds();
+	}
+
+	private void createWorldBounds() {
+		worldBounds = new Array<B2DEntity>();
+		worldBounds.add(new WorldBound(WorldBoundType.LEFT));
+		worldBounds.add(new WorldBound(WorldBoundType.RIGHT));
+		worldBounds.add(new WorldBound(WorldBoundType.BOTTOM));
+		for (final B2DEntity entity : worldBounds) {
+			entity.createBody(world);
+		}
 	}
 
 	private void createPlatforms() {
+		platforms = new Array<B2DEntity>();
+		platformsToDispose = new Array<B2DEntity>();
 		platformAtlas = AssetsManager.INSTANCE.getAsset(Asset.PLATFORMS, TextureAtlas.class);
 		for (float platformY = PLATFORM_OFFSET; platformY <= Game.getCurrentGame().getViewData().getHeight()
 				+ PLATFORM_OFFSET; platformY += PLATFORM_DISTANCE) {
@@ -92,7 +89,8 @@ public class GameWorld {
 		final Platform platform = new Platform(platformY);
 		platform.createBody(world);
 		platform.setRegion(platformAtlas.findRegion(platform.getInteractionStrategy().getTextureName()));
-		platform.updateFallingSpeed(platformForce);
+		platform.updateFallingSpeed(platformForce / 10f); // TODO: testowo dzielę na dziesięć by wolniej
+		// spadało
 		platforms.add(platform);
 	}
 
@@ -119,8 +117,6 @@ public class GameWorld {
 	 * @param delta time between since last update
 	 */
 	private void updatePlatforms(final float delta) {
-		int platformsAbove = 0;
-		int platformsBelow = 0;
 		for (final B2DEntity entity : platforms) {
 			entity.update(delta);
 			final Platform platform = (Platform) entity;
@@ -134,16 +130,13 @@ public class GameWorld {
 				for (final Fixture fixture : platform.getBody().getFixtureList()) {
 					fixture.setFilterData(CollisionFilter.PLATFORM_BELOW_PLAYER.getFilter());
 				}
-				platformsBelow++;
 			} else {
 				// apply new filter to all platform fixtures
 				for (final Fixture fixture : platform.getBody().getFixtureList()) {
 					fixture.setFilterData(CollisionFilter.PLATFORM_ABOVE_PLAYER.getFilter());
 				}
-				platformsAbove++;
 			}
 		}
-		// Gdx.app.log("Debug", "platforms below: " + platformsBelow + " platforms above: " + platformsAbove);
 		shouldUpdatePlatformForce = false;
 	}
 
@@ -173,29 +166,37 @@ public class GameWorld {
 
 			@Override
 			public void endContact(final Contact contact) {
+				final UserData userDataA = (UserData) contact.getFixtureA().getUserData();
+				final UserData userDataB = (UserData) contact.getFixtureB().getUserData();
+				userDataA.endContact(userDataB);
+				userDataB.endContact(userDataA);
 			}
 
 			@Override
 			public void beginContact(final Contact contact) {
-				Platform platform;
-				if (contact.getFixtureA().getUserData() instanceof Platform) {
-					platform = (Platform) contact.getFixtureA().getUserData();
-					if (contact.getFixtureB().getUserData() == null) {
-						platformsToDispose.add(platform);
-						platforms.removeValue(platform, true);
-						shouldCreatePlatform = true;
-					}
-					Gdx.app.log("Debug", "Platform touching");
-				}
-				if (contact.getFixtureB().getUserData() instanceof Platform) {
-					platform = (Platform) contact.getFixtureB().getUserData();
-					if (contact.getFixtureA().getUserData() == null) {
-						platformsToDispose.add(platform);
-						platforms.removeValue(platform, true);
-						shouldCreatePlatform = true;
-					}
-					Gdx.app.log("Debug", "Platform touching");
-				}
+				// Platform platform;
+				// if (contact.getFixtureA().getUserData() instanceof Platform) {
+				// platform = (Platform) contact.getFixtureA().getUserData();
+				// if (contact.getFixtureB().getUserData() == null) {
+				// platformsToDispose.add(platform);
+				// platforms.removeValue(platform, true);
+				// shouldCreatePlatform = true;
+				// }
+				// Gdx.app.log("Debug", "Platform touching");
+				// }
+				// if (contact.getFixtureB().getUserData() instanceof Platform) {
+				// platform = (Platform) contact.getFixtureB().getUserData();
+				// if (contact.getFixtureA().getUserData() == null) {
+				// platformsToDispose.add(platform);
+				// platforms.removeValue(platform, true);
+				// shouldCreatePlatform = true;
+				// }
+				// Gdx.app.log("Debug", "Platform touching");
+				// }
+				final UserData userDataA = (UserData) contact.getFixtureA().getUserData();
+				final UserData userDataB = (UserData) contact.getFixtureB().getUserData();
+				userDataA.beginContact(userDataB);
+				userDataB.beginContact(userDataA);
 			}
 
 		});

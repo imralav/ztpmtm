@@ -3,6 +3,7 @@ package pl.edu.pb.wi.ztpmtm.game.logic.interactionStrategies;
 import pl.edu.pb.wi.ztpmtm.entity.Player;
 import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
+import pl.edu.pb.wi.ztpmtm.game.logic.collisions.Bits;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
@@ -90,6 +91,7 @@ public enum InteractionStrategy {
 		fixtureDef.density = 1f;
 		fixtureDef.restitution = 0.2f;
 		fixtureDef.friction = 0.5f;
+		fixtureDef.filter.categoryBits = Bits.PLATFORM_CATEGORY_BIT;
 		return fixtureDef;
 	};
 

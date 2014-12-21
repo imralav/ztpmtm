@@ -14,10 +14,11 @@ public abstract class B2DEntity implements Entity {
 
 	public void createBody(final World world) {
 		body = prepareBody().createBody(world);
+	}
+
+	public void applyUserDataToAllFixtures(final UserData userData) {
 		for (final Fixture fixture : body.getFixtureList()) {
-			if (fixture.isSensor()) {
-				fixture.setUserData(this);
-			}
+			fixture.setUserData(userData);
 		}
 	}
 

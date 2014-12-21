@@ -5,6 +5,7 @@ import java.util.Map;
 
 import pl.edu.pb.wi.ztpmtm.animation.AnimationType;
 import pl.edu.pb.wi.ztpmtm.animation.FrameContainer;
+import pl.edu.pb.wi.ztpmtm.entity.UserData.EntityType;
 import pl.edu.pb.wi.ztpmtm.entity.creation.BodyCreator;
 import pl.edu.pb.wi.ztpmtm.game.logic.Game;
 import pl.edu.pb.wi.ztpmtm.game.logic.collisions.CollisionFilter;
@@ -37,13 +38,14 @@ public class Player extends AnimatedEntity {
 
 	private AnimationType currentAnimation;
 	private final Map<AnimationType, FrameContainer> animation;
+	private final UserData playerUserData;
 
 	public Player(final World world) {
 		animation = new HashMap<AnimationType, FrameContainer>();
 		setAnimations();
 		sprite = new Sprite(animation.get(currentAnimation).getCurrentRegion());
 		sprite.setOriginCenter();
-		createBody(world);
+		playerUserData = new UserData(EntityType.PLAYER, this);
 	}
 
 	@Override
@@ -76,6 +78,12 @@ public class Player extends AnimatedEntity {
 		return bodyCreator;
 	}
 
+	@Override
+	public void createBody(final World world) {
+		super.createBody(world);
+		applyUserDataToAllFixtures(playerUserData);
+	}
+
 	private void setAnimations() {
 		final TextureAtlas atlas = AssetsManager.INSTANCE.getAsset(Asset.PLAYER, TextureAtlas.class);
 		animation.put(AnimationType.WALK, new FrameContainer(WALKING_FRAMERATE, atlas.findRegions(WALK)));
@@ -102,7 +110,7 @@ public class Player extends AnimatedEntity {
 			currentAnimation = AnimationType.IDLE;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-			body.applyLinearImpulse(new Vector2(0, 1f), body.getWorldCenter(), true);
+			body.applyLinearImpulse(new Vector2(0, 5f), body.getWorldCenter(), true);
 		}
 	}
 
